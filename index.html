@@ -38,9 +38,26 @@
             Phone Number
             <input type="tel" id="phone" placeholder="+353..." />
           </label>
-          
+          <label class="wide">
+            Address
+            <input type="text" id="address" />  
+          </label>
+          <label>
+            Date of Birth
+            <input type="date" id="DoB" />
+          </label>
+          <label>
+            Occupation
+            <input type="text" id="occupation" />
+          </label>
+          <label>
+            Annual Income
+            <input type="number" id="annualIncome" min="0" step="0.01" required />
+          </label>
         </div>
+        <button type="submit">Register</button>
       </form>
+      <p id="registerMsg" class="msg"></p>
     </section>
   </main>
 </body>
