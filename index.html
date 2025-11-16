@@ -87,6 +87,49 @@
     </Section>
 
     <!----Records----->
+    <section id="records" class="tab">
+      <h2>Records</h2>
 
+      <details open>
+        <summary><strong>Taxpayer</strong></summary>
+        <div class="toolbar">
+          <input id="searchBox" palceholder="Search name/email/payer ID" />
+          <button id="exportBtn">Export JSON</button>
+          <input type="file" id="importFile" accept="application/jason" hidden />
+          <button id="importBtn">Import JSON</button>
+        </div>
+        <table id="taxpayerTable">
+          <thead>
+            <tr>
+              <th>Payer ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Income (€)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </details>
+
+      <details open>
+        <summary><strong>Assessment</strong></summary>
+        <table id="assessmentTable">
+          <thead>
+            <tr>
+              <th>Assessment ID</th>
+              <th>Payer ID</th>
+              <th>Year</th>
+              <th>Taxable (€)</th>
+              <th>Tax Due (€)</th>
+              <th>Created</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </details>
+    </section>
   </main>
+
 </body>
+</html>
