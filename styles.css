@@ -27,8 +27,8 @@ h2 { margin-top: 0; }
 .tabs button.active { background: #1a2752; border-color: #3a5bdc; }
 
 main { padding: 20px; }
-.tab { display: none; }
-.tab.active { display: block; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
 form .grid {
   display: grid; gap: 14px;
