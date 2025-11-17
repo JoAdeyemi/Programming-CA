@@ -313,6 +313,8 @@ function setupTabs() {
   });
 }
 
+document.addEventListener("DOMContentLoaded", setupTabs);
+
 function setupEvents() {
   $("#registerForm").addEventListener("submit", onRegisterSubmit);
   $("#assessmentForm").addEventListener("submit", onAssessmentSubmit);
