@@ -300,12 +300,12 @@ function importJSON(file) {
    Tabs & Event Bindings
    ======================= */
 function setupTabs() {
-  const tabs = document.querySelectorAll(".tabs button");
-  const sections = document.querySelectorAll(".tab");
-  tabs.forEach(btn => {
-    btn.addEventListener("click", () => {
+  const tabs = document.querySelectorAll(".tabs");
+  const sections = document.querySelectorAll(".tab-content");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
       tabs.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+      tab.classList.add("active");
       sections.forEach(s => s.classList.remove("active"));
       document.getElementById(btn.dataset.tab).classList.add("active");
     });
