@@ -300,27 +300,16 @@ function importJSON(file) {
    Tabs & Event Bindings
    ======================= */
 function setupTabs() {
-const tabs = document.querySelectorAll(".tab");
-const contents = document.querySelectorAll(".tab-content");
-
-tabs.forEach(tab => {
-  tab.addEventListener("click", () => {
-    
-    // Remove active class from previous tab
-    document.querySelector(".tab.active").classList.remove("active");
-
-    // Add active class to clicked tab
-    tab.classList.add("active");
-
-    // Hide previous content
-    document.querySelector(".tab-content.active")
-            .classList.remove("active");
-
-    // Show selected content
-    const selected = tab.getAttribute("data-tab");
-    document.getElementById(selected).classList.add("active");
+  const tabs = document.querySelectorAll(".tabs button");
+  const sections = document.querySelectorAll(".tab");
+  tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabs.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      sections.forEach(s => s.classList.remove("active"));
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
   });
-});
 }
 
 function setupEvents() {
