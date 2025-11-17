@@ -300,14 +300,15 @@ function importJSON(file) {
    Tabs & Event Bindings
    ======================= */
 function setupTabs() {
-  const tabs = document.querySelectorAll(".tabs");
+  const tabs = document.querySelectorAll(".tab");
   const sections = document.querySelectorAll(".tab-content");
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
       tabs.forEach(b => b.classList.remove("active"));
       tab.classList.add("active");
       sections.forEach(s => s.classList.remove("active"));
-      document.getElementById(btn.dataset.tab).classList.add("active");
+      const targetId = tab.dataset.tab;
+      document.getElementById(targetId).classList.add("active");
     });
   });
 }
