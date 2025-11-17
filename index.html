@@ -10,15 +10,15 @@
   <header>
     <h1>Taxpayer Registry and Assessments</h1>
     <nav class-"tabs">
-      <button data-tab="register" class="active">Register Taxpayer</button>
-      <button data-tab="assessment">Raise Assessment</button>
-      <button data-tab="records">Records</button>
+      <button class="tab active" data-tab="register">Register Taxpayer</button>
+      <button class="tab" data-tab="assessment">Raise Assessment</button>
+      <button class="tab" data-tab="records">Records</button>
     </nav>
   </header>
 
   <main>
     <!------Section to Register new Taxpayer---->
-    <section id="register" class="tab active">
+    <section id="register" class="tab-content active">
       <h2>Register New Taxpayer</h2>
       <form id="registerForm" autocomplete="off">
         <div class="grid">
@@ -61,7 +61,7 @@
     </section>
 
     <!---Assessment--->
-    <Section id="assessment" class="tab">
+    <Section id="assessment" class="tab-content">
       <h2>Rasie Tax Assessment</h2>
       <form id="assessmentForm" autocomplete="off">
         <div class="grid">
@@ -87,7 +87,7 @@
     </Section>
 
     <!----Records----->
-    <section id="records" class="tab">
+    <section id="records" class="tab-content">
       <h2>Records</h2>
 
       <details open>
