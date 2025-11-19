@@ -33,7 +33,11 @@ main { padding: 20px; }
 .tab-content.active {
     display: block;
 }
-
+register {
+    max-width: 600px;
+    margin-left: 40px;
+    padding: 20px
+}
 form .grid {
   display: grid; gap: 14px;
   grid-template-columns: 1fr;
