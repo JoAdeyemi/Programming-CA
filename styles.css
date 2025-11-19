@@ -39,12 +39,14 @@ register {
     padding: 20px
 }
 form .grid {
-  display: grid; gap: 14px;
+  display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 16px;
 }
 label { display: grid; gap: 6px; font-size: 14px; color: var(--muted); }
-label.wide { grid-column: 1; }
+label.wide {
+    grid-column: 1 !important;
+}
 input, select, button {
   padding: 10px 12px; border-radius: 10px; border: 1px solid #2b3f7a; outline: none;
   background: #0f1630; color: var(--text);
