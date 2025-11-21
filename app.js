@@ -331,8 +331,7 @@ function setupEvents() {
    ======================= */
 (function bootstrap() {
   initSequences();
-  setupTabs();
-  setupEvents();
+    setupEvents();
   refreshAllTables();
   refreshSelects();
 })();
