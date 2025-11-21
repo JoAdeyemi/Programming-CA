@@ -3,7 +3,7 @@
 <head>
   <meta charset-"utf-8" />
   <title>Taxpayer Registration and Assessment</title>
-  <meta name="viewport" content="width=device-width, initial scale-1" />
+  <meta name="viewport" content="width=device-width, initial scale=1" />
   <Link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -44,7 +44,7 @@
           </label>
           <label>
             Date of Birth
-            <input type="date" id="DoB" />
+            <input type="date" id="dob" />
           </label>
           <label>
             Occupation
@@ -79,7 +79,7 @@
           </label>
           <label>
             Allowable Deductions
-            <input type="number" id="deductions" min="o" step="0.01" value="0" />
+            <input type="number" id="deductions" min="0" step="0.01" value="0" />
           </label>                
         </div>
         <button type="Submit">Compute & Save Assessment</button>
@@ -93,9 +93,9 @@
       <details open>
         <summary><strong>Taxpayer</strong></summary>
         <div class="toolbar">
-          <input id="searchBox" palceholder="Search name/email/payer ID" />
+          <input id="searchBox" placeholder="Search name/email/payer ID" />
           <button id="exportBtn">Export JSON</button>
-          <input type="file" id="importFile" accept="application/jason" hidden />
+          <input type="file" id="importFile" accept="application/json" hidden />
           <button id="importBtn">Import JSON</button>
         </div>
         <table id="taxpayerTable">
