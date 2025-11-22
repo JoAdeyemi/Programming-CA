@@ -176,8 +176,8 @@ function onAssessmentSubmit(e) {
   const payerId = $("#payerSelect").value;
   const year = parseInt($("#taxYear").value, 10);
   const declaredIncome = parseFloat($("#declaredIncome").value);
-  const deductions = parseFloat($("#deductions").value) || 0;
-
+  const deductions = +(declaredIncome * 0.10). toFixed(2);
+  $("#deductions").values = deductions;
   const resEl = $("#assessmentResult");
   resEl.innerHTML = "";
 
