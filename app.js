@@ -205,12 +205,13 @@ function onAssessmentSubmit(e) {
   resEl.innerHTML = `
     <div>
       <h3>Assessment Created</h3>
-      <p><strong>ID:</strong> ${assessmentId}</p>
-      <p><strong>Payer:</strong> ${payerId}</p>
-      <p><strong>Tax Year:</strong> ${year}</p>
-      <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
-      <p><strong>Tax Due:</strong> <span style="font-size:1.1em">€${taxDue.toLocaleString()}</span></p>
-    </div>
+  <p><strong>ID:</strong> ${assessmentId}</p>
+  <p><strong>Payer:</strong> ${payerId}</p>
+  <p><strong>Tax Year:</strong> ${year}</p>
+  <p><strong>Declared Income:</strong> €${declaredIncome.toLocaleString()}</p>
+  <p><strong>Consolidated Relief (10%):</strong> €${deductions.toLocaleString()}</p>
+  <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
+  <p><strong>Tax Due:</strong> <span style="font-size:1.1em">€${taxDue.toLocaleString()}</span></p>
   `;
   $("#assessmentForm").reset();
 }
