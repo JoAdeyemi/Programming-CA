@@ -152,7 +152,20 @@ function onRegisterSubmit(e) {
   $("#registerForm").reset();
   refreshAllTables();
   refreshSelects();
-  toast(msgEl, `Registered successfully. Payer ID: ${payerId}`, "success");
+msgEl.innerHTML = `
+<div class="notice">
+Registration Successful!<br>
+<strong>Payer ID:</strong> ${payerId}<br><br>
+This ID has been generated and recorded.<br>
+Please keep it safe.
+<br><br>
+<button id="closeNotice">Close</button>
+</div>
+`;
+document.querySelector("#closeNotice").onclick = () => {
+  msgEl.innerHTML = "";
+};
+
 }
 
 /* =======================
