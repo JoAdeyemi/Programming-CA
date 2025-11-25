@@ -334,6 +334,11 @@ function setupEvents() {
   $("#assessmentForm").addEventListener("submit", onAssessmentSubmit);
   $("#searchBox").addEventListener("input", (e) => renderTaxpayerTable(e.target.value));
   $("#exportBtn").addEventListener("click", exportJSON);
+  $("declaredIncome").addEventlistener("input", () => {
+    const income = parseFloat($("#declaredIncome").value) || 0;
+    const relief = +(income * 0.10).toFixed(2);
+    $("#reliefDisplay").textContent = `€${relief.toLocaleString()}`;
+  });
   $("#importBtn").addEventListener("click", () => $("#importFile").click());
   $("#importFile").addEventListener("change", (e) => {
     if (e.target.files?.[0]) importJSON(e.target.files[0]);

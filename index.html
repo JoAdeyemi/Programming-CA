@@ -77,9 +77,9 @@
             Declared Income (€)
             <input type="number" id="declaredIncome" min="0" step="0.01" required />
           </label>
-          <label>
-            Consolidated Releifs (10%) 
-            <input type="number" id="deductions" readonly />
+          <label class="wide">
+            Consolidated Releifs (10% of Total income):
+            <span id="reliefDisplay" style="font-weight:bold; color:#8ab4ff;">€0</span> 
           </label>                
         </div>
         <button type="Submit">Compute & Save Assessment</button>
