@@ -179,11 +179,13 @@ function onAssessmentSubmit(e) {
   const declaredIncome = parseFloat($("#declaredIncome").value) || 0;
   const otherIncome = parseFloat($("#otherIncome").value) || 0;
 
+  // Total income and deductions
   const totalIncome = declaredIncome + otherIncome;
   const deductions = +(totalIncome * 0.10).toFixed(2);
 
+  // Taxable & tax due
   const taxable = Math.max(0, totalIncome - deductions);
-
+  const taxDue = computeTax(taxable);
 
   const resEl = $("#assessmentResult");
   resEl.innerHTML = "";
@@ -193,22 +195,20 @@ function onAssessmentSubmit(e) {
     return;
   }
 
-  
   const assessmentId = nextAssessmentId(year);
 
   const assessment = {
-  assessmentId,
-  payerId,
-  year,
-  declaredIncome,
-  otherIncome,
-  totalIncome,
-  deductions,
-  taxable,
-  taxDue,
-  createdAt: new Date().toISOString()
-};
-
+    assessmentId,
+    payerId,
+    year,
+    declaredIncome,
+    otherIncome,
+    totalIncome,
+    deductions,
+    taxable,
+    taxDue,
+    createdAt: new Date().toISOString()
+  };
 
   const assessments = getAssessments();
   assessments.push(assessment);
@@ -217,16 +217,16 @@ function onAssessmentSubmit(e) {
   refreshAllTables();
 
   resEl.innerHTML = `
-  <h3>Assessment Created</h3>
-  <p><strong>Payer:</strong> ${payerId}</p>
-  <p><strong>Declared Income:</strong> €${declaredIncome.toLocaleString()}</p>
-  <p><strong>Other Income:</strong> €${otherIncome.toLocaleString()}</p>
-  <p><strong>Total Income:</strong> €${totalIncome.toLocaleString()}</p>
-  <p><strong>Consolidated Relief (10%):</strong> €${deductions.toLocaleString()}</p>
-  <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
-  <p><strong>Tax Due:</strong> €${taxDue.toLocaleString()}</p>
-`;
-
+    <h3>Assessment Created</h3>
+    <p><strong>Payer:</strong> ${payerId}</p>
+    <p><strong>Declared Income:</strong> €${declaredIncome.toLocaleString()}</p>
+    <p><strong>Other Income:</strong> €${otherIncome.toLocaleString()}</p>
+    <p><strong>Total Income:</strong> €${totalIncome.toLocaleString()}</p>
+    <p><strong>Consolidated Relief (10%):</strong> €${deductions.toLocaleString()}</p>
+    <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
+    <p><strong>Tax Due:</strong> €${taxDue.toLocaleString()}</p>
+  `;
+}
 
 
 /* =======================
