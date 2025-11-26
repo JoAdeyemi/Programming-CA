@@ -266,6 +266,8 @@ function renderAssessmentTable() {
         <td>${a.assessmentId}</td>
         <td>${a.payerId}</td>
         <td>${a.year}</td>
+        <td>€${a.declaredIncome.toLocaleString()}</td>
+        <td>€${a.otherIncome.toLocaleString()}</td>
         <td>€${a.taxable.toLocaleString()}</td>
         <td>€${a.taxDue.toLocaleString()}</td>
         <td>${new Date(a.createdAt).toLocaleString()}</td>
