@@ -173,16 +173,17 @@ document.querySelector("#closeNotice").onclick = () => {
    ======================= */
 function onAssessmentSubmit(e) {
   e.preventDefault();
+
   const payerId = $("#payerSelect").value;
-  const year = parseInt($("#taxYear").value, 10);
+  const year = parseInt($("#taxYear").value);
   const declaredIncome = parseFloat($("#declaredIncome").value);
-  const deductions = +(declaredIncome * 0.10). toFixed(2);
-  $("#deductions").values = deductions;
+  const deductions = +(declaredIncome * 0.10).toFixed(2);  // auto 10%
+
   const resEl = $("#assessmentResult");
   resEl.innerHTML = "";
 
-  if (!payerId || Number.isNaN(year) || Number.isNaN(declaredIncome) || declaredIncome < 0 || deductions < 0) {
-    resEl.innerHTML = `<p class="msg error">Please complete the form with valid numbers.</p>`;
+  if (!payerId || isNaN(year) || isNaN(declaredIncome)) {
+    resEl.innerHTML = `<p class="msg error">Please enter valid values.</p>`;
     return;
   }
 
@@ -191,8 +192,13 @@ function onAssessmentSubmit(e) {
   const assessmentId = nextAssessmentId(year);
 
   const assessment = {
-    assessmentId, payerId, year,
-    declaredIncome, deductions, taxable, taxDue,
+    assessmentId,
+    payerId,
+    year,
+    declaredIncome,
+    deductions,
+    taxable,
+    taxDue,
     createdAt: new Date().toISOString()
   };
 
@@ -203,18 +209,20 @@ function onAssessmentSubmit(e) {
   refreshAllTables();
 
   resEl.innerHTML = `
-    <div>
-      <h3>Assessment Created</h3>
-  <p><strong>ID:</strong> ${assessmentId}</p>
-  <p><strong>Payer:</strong> ${payerId}</p>
-  <p><strong>Tax Year:</strong> ${year}</p>
-  <p><strong>Declared Income:</strong> €${declaredIncome.toLocaleString()}</p>
-  <p><strong>Consolidated Relief (10%):</strong> €${deductions.toLocaleString()}</p>
-  <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
-  <p><strong>Tax Due:</strong> <span style="font-size:1.1em">€${taxDue.toLocaleString()}</span></p>
+    <h3>Assessment Created</h3>
+    <p><strong>ID:</strong> ${assessmentId}</p>
+    <p><strong>Payer:</strong> ${payerId}</p>
+    <p><strong>Tax Year:</strong> ${year}</p>
+    <p><strong>Declared Income:</strong> €${declaredIncome.toLocaleString()}</p>
+    <p><strong>Consolidated Relief (10%):</strong> €${deductions.toLocaleString()}</p>
+    <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
+    <p><strong>Tax Due:</strong> €${taxDue.toLocaleString()}</p>
   `;
+
   $("#assessmentForm").reset();
+  $("#reliefDisplay").textContent = "€0";
 }
+
 
 /* =======================
    Records (Tables/Search)
@@ -347,10 +355,11 @@ function setupEvents() {
 
   // Auto-calculate Consolidated Relief (10%)
   $("#declaredIncome").addEventListener("input", () => {
-    const income = parseFloat($("#declaredIncome").value) || 0;
-    const relief = +(income * 0.10).toFixed(2);
-    $("#reliefDisplay").textContent = `€${relief.toLocaleString()}`;
-  });
+  const income = parseFloat($("#declaredIncome").value) || 0;
+  const relief = +(income * 0.10).toFixed(2);
+  $("#reliefDisplay").textContent = `€${relief.toLocaleString()}`;
+});
+
 
   // Import JSON triggers hidden file input
   $("#importBtn").addEventListener("click", () => {

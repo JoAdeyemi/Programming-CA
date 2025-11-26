@@ -62,30 +62,39 @@
 
     <!---Assessment--->
     <section id="assessment" class="tab-content">
-      <h2>Raise Tax Assessment</h2>
-      <form id="assessmentForm" autocomplete="off">
-        <div class="grid">
-          <label class="wide">
-            Select Taxpayer
-            <select id="payerSelect" required></select>
-          </label>
-          <label>
-            Tax Year
-            <input type="number" id="taxYear" min="2000" max="2100" value="2025" required />
-          </label>
-          <label>
-            Declared Income (€)
-            <input type="number" id="declaredIncome" min="0" step="0.01" required />
-          </label>
-          <label class="wide">
-            Consolidated Releifs (10% of Total income):
-            <span id="reliefDisplay" style="font-weight:bold; color:#8ab4ff;">€0</span> 
-          </label>                
-        </div>
-        <button type="submit">Compute & Save Assessment</button>
-      </form>
-      <div id="assessmentResult" class="card"></div>
-    </Section>
+  <h2>Raise Tax Assessment</h2>
+
+  <form id="assessmentForm" autocomplete="off">
+    <div class="grid">
+      
+      <label class="wide">
+        Select Taxpayer
+        <select id="payerSelect" required></select>
+      </label>
+
+      <label>
+        Tax Year
+        <input type="number" id="taxYear" min="2000" max="2100" value="2025" required />
+      </label>
+
+      <label>
+        Declared Income (€)
+        <input type="number" id="declaredIncome" min="0" step="0.01" required />
+      </label>
+
+      <label class="wide">
+        Consolidated Reliefs (10% of Total Income):
+        <span id="reliefDisplay" style="font-weight:bold; color:#8ab4ff;">€0</span>
+      </label>
+
+    </div>
+
+    <button type="submit">Compute & Save Assessment</button>
+  </form>
+
+  <div id="assessmentResult" class="card"></div>
+</section>
+
 
     <!----Records----->
     <section id="records" class="tab-content">
