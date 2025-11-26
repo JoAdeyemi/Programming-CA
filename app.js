@@ -330,20 +330,42 @@ function setupTabs() {
 document.addEventListener("DOMContentLoaded", setupTabs);
 
 function setupEvents() {
+
+  // Register taxpayer form
   $("#registerForm").addEventListener("submit", onRegisterSubmit);
+
+  // Assessment form
   $("#assessmentForm").addEventListener("submit", onAssessmentSubmit);
-  $("#searchBox").addEventListener("input", (e) => renderTaxpayerTable(e.target.value));
+
+  // Search taxpayers
+  $("#searchBox").addEventListener("input", (e) => {
+    renderTaxpayerTable(e.target.value);
+  });
+
+  // Export JSON
   $("#exportBtn").addEventListener("click", exportJSON);
-  $("declaredIncome").addEventlistener("input", () => {
+
+  // Auto-calculate Consolidated Relief (10%)
+  $("#declaredIncome").addEventListener("input", () => {
     const income = parseFloat($("#declaredIncome").value) || 0;
     const relief = +(income * 0.10).toFixed(2);
     $("#reliefDisplay").textContent = `€${relief.toLocaleString()}`;
   });
-  $("#importBtn").addEventListener("click", () => $("#importFile").click());
-  $("#importFile").addEventListener("change", (e) => {
-    if (e.target.files?.[0]) importJSON(e.target.files[0]);
+
+  // Import JSON triggers hidden file input
+  $("#importBtn").addEventListener("click", () => {
+    $("#importFile").click();
   });
+
+  // Handle JSON file selection
+  $("#importFile").addEventListener("change", (e) => {
+    if (e.target.files?.[0]) {
+      importJSON(e.target.files[0]);
+    }
+  });
+
 }
+
 
 /* =======================
    Bootstrap
