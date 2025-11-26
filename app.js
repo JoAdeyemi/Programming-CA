@@ -260,6 +260,7 @@ function renderTaxpayerTable(filter = "") {
 function renderAssessmentTable() {
   const tbody = $("#assessmentTable tbody");
   const list = getAssessments();
+
   tbody.innerHTML = list.length
     ? list.slice().reverse().map(a => `
       <tr>
@@ -273,7 +274,7 @@ function renderAssessmentTable() {
         <td>${new Date(a.createdAt).toLocaleString()}</td>
       </tr>
     `).join("")
-    : `<tr><td colspan="6" style="opacity:.7">No assessments yet.</td></tr>`;
+    : `<tr><td colspan="8" style="opacity:.7">No assessments yet.</td></tr>`;
 }
 
 function refreshSelects() {
