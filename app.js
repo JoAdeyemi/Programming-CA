@@ -193,8 +193,7 @@ function onAssessmentSubmit(e) {
     return;
   }
 
-  const taxable = Math.max(0, declaredIncome - deductions);
-  const taxDue = computeTax(taxable);
+  
   const assessmentId = nextAssessmentId(year);
 
   const assessment = {
