@@ -79,7 +79,17 @@
 
       <label>
         Declared Income (€)
-        <input type="number" id="declaredIncome" min="0" step="0.01" required />
+        <input type="number" id="declaredIncome" readonly />
+      </label>
+
+      <label>
+        Other Income:
+        <input type="number" id="otherIncome" min="0" step="0.01" value="0" />
+      </label>
+
+      <label class="wide">
+        Total Income:
+        <span id="reliefDisplay" style="font-weight:bold; color:#8ab4ff;"></span>
       </label>
 
       <label class="wide">
