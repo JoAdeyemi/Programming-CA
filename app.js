@@ -389,14 +389,7 @@ function updateIncomeCalculations() {
   // Export JSON
   $("#exportBtn").addEventListener("click", exportJSON);
 
-  // Auto-calculate Consolidated Relief (10%)
-  $("#declaredIncome").addEventListener("input", () => {
-  const income = parseFloat($("#declaredIncome").value) || 0;
-  const relief = +(income * 0.10).toFixed(2);
-  $("#reliefDisplay").textContent = `€${relief.toLocaleString()}`;
-});
-
-
+  
   // Import JSON triggers hidden file input
   $("#importBtn").addEventListener("click", () => {
     $("#importFile").click();
