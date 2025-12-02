@@ -42,6 +42,10 @@ form .grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  .half {
+    width: 48%;
+    display: inline-block;
+  }
 }
 
 label.wide {
