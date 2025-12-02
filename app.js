@@ -178,13 +178,21 @@ function onAssessmentSubmit(e) {
   const year = parseInt($("#taxYear").value);
   const declaredIncome = parseFloat($("#declaredIncome").value) || 0;
   const otherIncome = parseFloat($("#otherIncome").value) || 0;
+  const pensionRelief = parseFloat($("#pensionRelief").value) || 0;
 
   // Total income and deductions
   const totalIncome = declaredIncome + otherIncome;
-  const deductions = +(totalIncome * 0.10).toFixed(2);
+  const deductions = +(totalIncome * 0.20).toFixed(2);
 
   // Taxable & tax due
-  const taxable = Math.max(0, totalIncome - deductions);
+  let taxable =
+    totalIncome -
+    deductions -
+    pensionRelief -
+    consolidatedRelief;
+
+  if (taxable < 0) taxable = 0;
+
   const taxDue = computeTax(taxable);
 
   const resEl = $("#assessmentResult");
@@ -205,6 +213,8 @@ function onAssessmentSubmit(e) {
     otherIncome,
     totalIncome,
     deductions,
+    pensionRelief,
+    consolidatedRelief,
     taxable,
     taxDue,
     createdAt: new Date().toISOString()
@@ -222,7 +232,9 @@ function onAssessmentSubmit(e) {
     <p><strong>Declared Income:</strong> €${declaredIncome.toLocaleString()}</p>
     <p><strong>Other Income:</strong> €${otherIncome.toLocaleString()}</p>
     <p><strong>Total Income:</strong> €${totalIncome.toLocaleString()}</p>
-    <p><strong>Consolidated Relief (10%):</strong> €${deductions.toLocaleString()}</p>
+    <p><strong>Allowable Deductions (10%):</strong> €${deductions.toLocaleString()}</p>
+    <p><strong>Pension Relief:</strong> €${pensionRelief.toLocaleString()}</p>
+    <p><strong>Consolidated Relief (20%):</strong> €${consolidatedRelief.toLocaleString()}</p>
     <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
     <p><strong>Tax Due:</strong> €${taxDue.toLocaleString()}</p>
   `;
