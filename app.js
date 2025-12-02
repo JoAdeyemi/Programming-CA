@@ -392,9 +392,10 @@ $("#otherIncome").addEventListener("input", updateIncomeCalculations);
 function updateIncomeCalculations() {
   const declared = parseFloat($("#declaredIncome").value) || 0;
   const other = parseFloat($("#otherIncome").value) || 0;
-
   const total = declared + other;
-  const relief = +(total * 0.10).toFixed(2);
+
+  const pensionRelief = parseFloat($("#pensionRelief").value) || 0;
+  const consolidatedRelief = +(total * 0.20).toFixed(2);
 
   $("#totalIncomeDisplay").textContent = `€${total.toLocaleString()}`;
   $("#reliefDisplay").textContent = `€${relief.toLocaleString()}`;
