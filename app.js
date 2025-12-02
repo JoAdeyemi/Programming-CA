@@ -351,6 +351,10 @@ function setupTabs() {
       sections.forEach(s => s.classList.remove("active"));
       const targetId = tab.dataset.tab;
       document.getElementById(targetId).classList.add("active");
+
+      if (targetId === "assessment") {
+        refreshSelects();
+      }
     });
   });
 }
