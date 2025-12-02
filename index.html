@@ -64,46 +64,34 @@
     <section id="assessment" class="tab-content">
   <h2>Raise Tax Assessment</h2>
 
-  <form id="assessmentForm" autocomplete="off">
-    <div class="form-group half">
-      
-      <label class="wide">
-        Select Taxpayer
-        <select id="payerSelect" required></select>
-      </label>
+  <form id="assessmentForm" class="form-vertical">
 
-      <label>
-        Tax Year
-        <input type="number" id="taxYear" min="2000" max="2100" value="2025" required />
-      </label>
+  <label>Select Taxpayer</label>
+  <select id="payerSelect"></select>
 
-      <label>
-        Declared Income (€)
-        <input type="number" id="declaredIncome" readonly />
-      </label>
+  <label>Tax Year</label>
+  <input type="number" id="taxYear" value="2025">
 
-      <label>
-        Other Income:
-        <input type="number" id="otherIncome" min="0" step="0.01" value="0" />
-      </label>
+  <label>Declared Income (₦)</label>
+  <input type="number" id="declaredIncome">
 
-      <label class="wide">
-        Total Income:
-        <span id="totalIncomeDisplay" style="font-weight:bold; color:#8ab4ff;">€0</span>
-      </label>
+  <label>Other Income (₦)</label>
+  <input type="number" id="otherIncome" value="0">
 
-      <label class="wide">
-        Consolidated Reliefs (10% of Total Income):
-        <span id="reliefDisplay" style="font-weight:bold; color:#8ab4ff;">€0</span>
-      </label>
+  <label>Pension Relief Contribution (₦)</label>
+  <input type="number" id="pensionRelief" value="0">
 
-      <label>Pension Relief Contribution (€)</label>
-      <input type="number" id="pensionRelief" value="0" />
+  <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
 
-    </div>
+  <p>
+    <strong>Reliefs:</strong><br>
+    Allowable (10%): <span id="deductionDisplay">₦0</span><br>
+    Consolidated (20%): <span id="consolDisplay">₦0</span>
+  </p>
 
-    <button type="submit">Compute & Save Assessment</button>
-  </form>
+  <button class="btn-primary" type="submit">Compute & Save Assessment</button>
+
+</form>
 
   <div id="assessmentResult" class="card"></div>
 </section>

@@ -38,12 +38,17 @@ register {
     margin-left: 40px;
     padding: 20px
 }
-form .grid {
-  display: grid;
-  grid-template-columns: 1fr;
+.form-vertical {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-    
 }
+
+.form-vertical input,
+.form-vertical select {
+  width: 100%;
+}
+
 
 label.wide {
     grid-column: 1 !important;
