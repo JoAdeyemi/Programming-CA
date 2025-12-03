@@ -191,7 +191,7 @@ function onAssessmentSubmit(e) {
   const totalIncome = declaredIncome + otherIncome;
 
   // 2. Allowable deductions (10%)
-  const deductions = +(totalIncome * 0.10).toFixed(2);
+  const deductions = 0
 
   // 3. Consolidated relief (20% of total)
   const consolidatedRelief = +(totalIncome * 0.20).toFixed(2);
@@ -199,7 +199,6 @@ function onAssessmentSubmit(e) {
   // 4. Taxable income
   let taxable =
     totalIncome -
-    deductions -
     pensionRelief -
     consolidatedRelief;
 
@@ -237,7 +236,6 @@ function onAssessmentSubmit(e) {
     <p><strong>Declared Income:</strong> ₦${declaredIncome.toLocaleString()}</p>
     <p><strong>Other Income:</strong> ₦${otherIncome.toLocaleString()}</p>
     <p><strong>Total Income:</strong> ₦${totalIncome.toLocaleString()}</p>
-    <p><strong>Allowable Deductions (10%):</strong> ₦${deductions.toLocaleString()}</p>
     <p><strong>Pension Relief:</strong> ₦${pensionRelief.toLocaleString()}</p>
     <p><strong>Consolidated Relief (20%):</strong> ₦${consolidatedRelief.toLocaleString()}</p>
     <p><strong>Taxable Income:</strong> ₦${taxable.toLocaleString()}</p>
@@ -416,11 +414,9 @@ function updateIncomeCalculations() {
 
   const total = declared + other;
 
-  const deductions = +(total * 0.10).toFixed(2);
-  const consolidatedRelief = +(total * 0.20).toFixed(2);
+    const consolidatedRelief = +(total * 0.20).toFixed(2);
 
   $("#totalIncomeDisplay").textContent = `₦${total.toLocaleString()}`;
-  $("#deductionDisplay").textContent = `₦${deductions.toLocaleString()}`;
   $("#consolDisplay").textContent = `₦${consolidatedRelief.toLocaleString()}`;
 }
 
