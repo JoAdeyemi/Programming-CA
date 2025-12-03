@@ -169,22 +169,34 @@ document.querySelector("#closeNotice").onclick = () => {
 }
 
 /* =======================
-   Assessment
+   Assessment (UPDATED)
    ======================= */
 function onAssessmentSubmit(e) {
   e.preventDefault();
 
   const payerId = $("#payerSelect").value;
-  const year = parseInt($("#taxYear").value);
+  const year = parseInt($("#taxYear").value, 10);
+
   const declaredIncome = parseFloat($("#declaredIncome").value) || 0;
   const otherIncome = parseFloat($("#otherIncome").value) || 0;
   const pensionRelief = parseFloat($("#pensionRelief").value) || 0;
 
-  // Total income and deductions
-  const totalIncome = declaredIncome + otherIncome;
-  const deductions = +(totalIncome * 0.20).toFixed(2);
+  if (!payerId || isNaN(year)) {
+    $("#assessmentResult").innerHTML =
+      `<p class="msg error">Please select a taxpayer and enter a valid year.</p>`;
+    return;
+  }
 
-  // Taxable & tax due
+  // 1. Total income
+  const totalIncome = declaredIncome + otherIncome;
+
+  // 2. Allowable deductions (10%)
+  const deductions = +(totalIncome * 0.10).toFixed(2);
+
+  // 3. Consolidated relief (20% of total)
+  const consolidatedRelief = +(totalIncome * 0.20).toFixed(2);
+
+  // 4. Taxable income
   let taxable =
     totalIncome -
     deductions -
@@ -194,14 +206,6 @@ function onAssessmentSubmit(e) {
   if (taxable < 0) taxable = 0;
 
   const taxDue = computeTax(taxable);
-
-  const resEl = $("#assessmentResult");
-  resEl.innerHTML = "";
-
-  if (!payerId || isNaN(year) || isNaN(declaredIncome)) {
-    resEl.innerHTML = `<p class="msg error">Please enter valid values.</p>`;
-    return;
-  }
 
   const assessmentId = nextAssessmentId(year);
 
@@ -226,19 +230,21 @@ function onAssessmentSubmit(e) {
 
   refreshAllTables();
 
+  const resEl = $("#assessmentResult");
   resEl.innerHTML = `
     <h3>Assessment Created</h3>
     <p><strong>Payer:</strong> ${payerId}</p>
-    <p><strong>Declared Income:</strong> €${declaredIncome.toLocaleString()}</p>
-    <p><strong>Other Income:</strong> €${otherIncome.toLocaleString()}</p>
-    <p><strong>Total Income:</strong> €${totalIncome.toLocaleString()}</p>
-    <p><strong>Allowable Deductions (10%):</strong> €${deductions.toLocaleString()}</p>
-    <p><strong>Pension Relief:</strong> €${pensionRelief.toLocaleString()}</p>
-    <p><strong>Consolidated Relief (20%):</strong> €${consolidatedRelief.toLocaleString()}</p>
-    <p><strong>Taxable Income:</strong> €${taxable.toLocaleString()}</p>
-    <p><strong>Tax Due:</strong> €${taxDue.toLocaleString()}</p>
+    <p><strong>Declared Income:</strong> ₦${declaredIncome.toLocaleString()}</p>
+    <p><strong>Other Income:</strong> ₦${otherIncome.toLocaleString()}</p>
+    <p><strong>Total Income:</strong> ₦${totalIncome.toLocaleString()}</p>
+    <p><strong>Allowable Deductions (10%):</strong> ₦${deductions.toLocaleString()}</p>
+    <p><strong>Pension Relief:</strong> ₦${pensionRelief.toLocaleString()}</p>
+    <p><strong>Consolidated Relief (20%):</strong> ₦${consolidatedRelief.toLocaleString()}</p>
+    <p><strong>Taxable Income:</strong> ₦${taxable.toLocaleString()}</p>
+    <p><strong>Tax Due:</strong> ₦${taxDue.toLocaleString()}</p>
   `;
 }
+
 
 
 /* =======================
@@ -274,20 +280,28 @@ function renderAssessmentTable() {
   const list = getAssessments();
 
   tbody.innerHTML = list.length
-    ? list.slice().reverse().map(a => `
-      <tr>
-        <td>${a.assessmentId}</td>
-        <td>${a.payerId}</td>
-        <td>${a.year}</td>
-        <td>€${a.declaredIncome.toLocaleString()}</td>
-        <td>€${a.otherIncome.toLocaleString()}</td>
-        <td>€${a.taxable.toLocaleString()}</td>
-        <td>€${a.taxDue.toLocaleString()}</td>
-        <td>${new Date(a.createdAt).toLocaleString()}</td>
-      </tr>
-    `).join("")
+    ? list.slice().reverse().map(a => {
+        const declared = Number(a.declaredIncome || 0);
+        const other = Number(a.otherIncome || 0);
+        const taxable = Number(a.taxable || 0);
+        const taxDue = Number(a.taxDue || 0);
+
+        return `
+        <tr>
+          <td>${a.assessmentId}</td>
+          <td>${a.payerId}</td>
+          <td>${a.year}</td>
+          <td>₦${declared.toLocaleString()}</td>
+          <td>₦${other.toLocaleString()}</td>
+          <td>₦${taxable.toLocaleString()}</td>
+          <td>₦${taxDue.toLocaleString()}</td>
+          <td>${new Date(a.createdAt).toLocaleString()}</td>
+        </tr>
+      `;
+      }).join("")
     : `<tr><td colspan="8" style="opacity:.7">No assessments yet.</td></tr>`;
 }
+
 
 function refreshSelects() {
   renderOptions($("#payerSelect"), getTaxpayers());
@@ -390,20 +404,26 @@ $("#payerSelect").addEventListener("change", () => {
 });
 
 // When "Other Income" changes, update total income & relief
+$("#declaredIncome").addEventListener("input", updateIncomeCalculations);
 $("#otherIncome").addEventListener("input", updateIncomeCalculations);
+$("#pensionRelief").addEventListener("input", updateIncomeCalculations);
 
 // Reusable function
 function updateIncomeCalculations() {
   const declared = parseFloat($("#declaredIncome").value) || 0;
   const other = parseFloat($("#otherIncome").value) || 0;
+  const pensionRelief = parseFloat($("#pensionRelief").value) || 0;
+
   const total = declared + other;
 
-  const pensionRelief = parseFloat($("#pensionRelief").value) || 0;
+  const deductions = +(total * 0.10).toFixed(2);
   const consolidatedRelief = +(total * 0.20).toFixed(2);
 
-  $("#totalIncomeDisplay").textContent = `€${total.toLocaleString()}`;
-  $("#reliefDisplay").textContent = `€${relief.toLocaleString()}`;
+  $("#totalIncomeDisplay").textContent = `₦${total.toLocaleString()}`;
+  $("#deductionDisplay").textContent = `₦${deductions.toLocaleString()}`;
+  $("#consolDisplay").textContent = `₦${consolidatedRelief.toLocaleString()}`;
 }
+
 
 
   // Export JSON
