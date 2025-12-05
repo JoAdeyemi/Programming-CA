@@ -18,74 +18,96 @@
 
   <main>
     <!------Section to Register new Taxpayer---->
-    <section id="register" class="form-section">
-  <h2>Register New Taxpayer</h2>
+<!-- =========================
+     Register Taxpayer Section
+     ========================= -->
+<section id="register" class="tab-content active">
+    <h2>Register New Taxpayer</h2>
 
-  <form id="registerForm" class="form-box">
+    <form id="registerForm" class="grid">
 
-    <label>First Name</label>
-    <input type="text" id="firstName">
+        <label>First name
+            <input type="text" id="firstName" required>
+        </label>
 
-    <label>Last Name</label>
-    <input type="text" id="lastName">
+        <label>Last Name
+            <input type="text" id="lastName" required>
+        </label>
 
-    <label>Email</label>
-    <input type="email" id="email">
+        <label>Email
+            <input type="email" id="email" required>
+        </label>
 
-    <label>Phone Number</label>
-    <input type="text" id="phone" placeholder="+353...">
+        <label>Phone Number
+            <input type="text" id="phone" placeholder="+353..." required>
+        </label>
 
-    <label>Address</label>
-    <input type="text" id="address">
+        <label>Address
+            <input type="text" id="address">
+        </label>
 
-    <label>Date of Birth</label>
-    <input type="date" id="dob">
+        <label>Date of Birth
+            <input type="date" id="dob">
+        </label>
 
-    <label>Occupation</label>
-    <input type="text" id="occupation">
+        <label>Occupation
+            <input type="text" id="occupation">
+        </label>
 
-    <label>Annual Income (₦)</label>
-    <input type="number" id="annualIncome">
+        <label>Annual Income (₦)
+            <input type="number" id="annualIncome" required>
+        </label>
 
-    <button type="submit" class="btn-primary">Register</button>
+        <button type="submit">Register</button>
 
-    <div id="registerMsg" class="msg"></div>
-  </form>
+        <div id="registerMsg" class="msg"></div>
+
+    </form>
 </section>
 
-    <!---Assessment--->
-    <section id="assessment" class="form-section">
-  <h2>Raise Tax Assessment</h2>
 
-  <form id="assessmentForm" class="form-box">
+<!-- =========================
+     Raise Assessment Section
+     ========================= -->
+<section id="assessment" class="tab-content">
+    <h2>Raise Tax Assessment</h2>
 
-    <label>Select Taxpayer</label>
-    <select id="payerSelect"></select>
+    <form id="assessmentForm" class="grid">
 
-    <label>Tax Year</label>
-    <input type="number" id="taxYear" value="2025">
+        <label>Select Taxpayer
+            <select id="payerSelect"></select>
+        </label>
 
-    <label>Declared Income (₦)</label>
-    <input type="number" id="declaredIncome">
+        <label>Tax Year
+            <input type="number" id="taxYear" value="2025">
+        </label>
 
-    <label>Other Income (₦)</label>
-    <input type="number" id="otherIncome" value="0">
+        <label>Declared Income (₦)
+            <input type="number" id="declaredIncome">
+        </label>
 
-    <label>Pension Relief Contribution (₦)</label>
-    <input type="number" id="pensionRelief" value="0">
+        <label>Other Income (₦)
+            <input type="number" id="otherIncome" value="0">
+        </label>
 
-    <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
+        <label>Pension Relief Contribution (₦)
+            <input type="number" id="pensionRelief" value="0">
+        </label>
 
-    <p>
-      <strong>Reliefs:</strong><br>
-      Consolidated Relief (20%): <span id="consolDisplay">₦0</span>
-    </p>
+        <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
 
-    <button type="submit" class="btn-primary">Compute & Save Assessment</button>
-  </form>
+        <p>
+            <strong>Relief:</strong><br>
+            Consolidated Relief (20%): <span id="consolDisplay">₦0</span>
+        </p>
 
-  <div id="assessmentResult"></div>
+        <button type="submit">Compute & Save Assessment</button>
+
+        <div id="assessmentResult" class="msg"></div>
+
+    </form>
 </section>
+
 
     <!----Records----->
   

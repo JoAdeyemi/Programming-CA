@@ -1,124 +1,86 @@
-/* === Style.css code got from ChatGpt === */
-
-.dashboard-section {
-  background: #101a37;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  margin-bottom: 28px;
-  border: 1px solid rgba(255,255,255,0.05);
+:root {
+  --bg: #0b1020;
+  --card: #121a33;
+  --text: #e8ecff;
+  --muted: #9fb0ff;
+  --accent: #6ea8fe;
+  --danger: #ff8787;
+  --shadow: 0 10px 24px rgba(0,0,0,0.25);
 }
 
-.dashboard-section h2 {
-  margin-top: 0;
-  margin-bottom: 18px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #cdd9ff;
-  border-bottom: 1px solid #23315f;
-  padding-bottom: 6px;
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 800px at 10% 10%, #172040, #0b1020 60%);
+  font-family: system-ui;
+  color: var(--text);
 }
 
-form.form-vertical label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  color: #aab8ff;
-}
+header { padding: 20px; }
 
-form.form-vertical input,
-form.form-vertical select {
-  font-size: 15px;
-  padding: 12px;
-  border-radius: 12px;
-  background: #0d142c;
-  border: 1px solid #283b78;
-  transition: border-color .25s, box-shadow .25s;
-}
-
-form.form-vertical input:focus,
-form.form-vertical select:focus {
-  border-color: #5a8bff;
-  box-shadow: 0 0 0 3px rgba(90,139,255,0.15);
-}
-
-.btn-primary {
-  background: linear-gradient(180deg, #3f66ff, #2c4ad3);
-  border: none;
-  padding: 12px 20px;
-  border-radius: 10px;
-  color: #fff;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 15px;
-  transition: background .25s, transform .2s;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(180deg, #597aff, #3756df);
-  transform: translateY(-1px);
-}
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.table-card {
-  background: #0f172e;
-  border-radius: 14px;
-  padding: 16px;
-  border: 1px solid #23315f;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
-}
-
-.table-card h3 {
-  margin: 0 0 12px;
-  color: #cbd5ff;
-}
-
-.tab-content {
-  animation: fadeIn .4s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; margin-top: 6px; }
-  to   { opacity: 1; margin-top: 0; }
-}
-
-/* ============================
-   GLOBAL CENTERED FORM LAYOUT
-   ============================ */
-.section-wrapper {
-  width: 60%;
-  margin: 0 auto;
-  padding: 20px 0;
-}
-
-.form-vertical {
+.tabs {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  gap: 10px;
+  padding: 0 20px;
 }
 
-.form-vertical input,
-.form-vertical select,
-.form-vertical textarea {
-  width: 100%;
+.tabs button {
+  background: #0f1630;
+  border: 1px solid #2b3f7a;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
 }
 
-.section-title {
-  font-size: 22px;
-  margin-bottom: 14px;
-  font-weight: 600;
+.tabs button.active {
+  background: #1a2752;
+  border-color: var(--accent);
 }
 
-.table-card {
+main { padding: 20px; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+
+/* Form Layout */
+form.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  max-width: 900px;
   background: var(--card);
   padding: 20px;
   border-radius: 12px;
-  margin-top: 18px;
-  border: 1px solid #2b3f7a;
+  margin-bottom: 24px;
 }
 
+form.grid label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+}
 
+input, select, button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #2b3f7a;
+  background: #0f1630;
+  color: var(--text);
+}
 
+button[type="submit"] {
+  background: linear-gradient(180deg, #335ef3, #2848c2);
+  color: white;
+  border: none;
+  cursor: pointer;
+  grid-column: 1 / span 2;
+}
+
+.msg {
+  grid-column: 1 / span 2;
+  margin-top: 10px;
+}
