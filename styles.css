@@ -85,4 +85,40 @@ form.form-vertical select:focus {
   to   { opacity: 1; margin-top: 0; }
 }
 
+/* ============================
+   GLOBAL CENTERED FORM LAYOUT
+   ============================ */
+.section-wrapper {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.form-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-vertical input,
+.form-vertical select,
+.form-vertical textarea {
+  width: 100%;
+}
+
+.section-title {
+  font-size: 22px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.table-card {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 18px;
+  border: 1px solid #2b3f7a;
+}
+
+
 
