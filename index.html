@@ -101,27 +101,25 @@
     <!----Records----->
     <section id="records" class="tab-content">
 
-  <div class="dashboard-section">
+  <h2>Records</h2>
 
-    <h2>Records</h2>
-
-    <!-- Toolbar -->
-    <div class="toolbar">
+  <!-- Search Bar + Buttons -->
+  <div class="toolbar">
       <input 
         type="text" 
         id="searchBox" 
-        placeholder="Search taxpayers by name, email, or ID…"
-        style="flex:1;">
-      
+        placeholder="Search taxpayers by name, email or payer ID"
+      />
       <button id="exportBtn">Export JSON</button>
       <button id="importBtn">Import JSON</button>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
-    </div>
+  </div>
 
-    <!-- Taxpayer Table -->
-    <div class="table-card">
-      <h3>Registered Taxpayers</h3>
+  <!-- Registered Taxpayers -->
+  <div class="card">
+    <h3>Registered Taxpayers</h3>
 
+    <div class="table-container">
       <table id="taxpayerTable">
         <thead>
           <tr>
@@ -133,15 +131,17 @@
           </tr>
         </thead>
         <tbody>
-          <!-- dynamically rendered -->
+          <!-- JS populates -->
         </tbody>
       </table>
     </div>
+  </div>
 
-    <!-- Assessment Table -->
-    <div class="table-card" style="margin-top:25px;">
-      <h3>Tax Assessments</h3>
+  <!-- Tax Assessments -->
+  <div class="card">
+    <h3>Tax Assessments</h3>
 
+    <div class="table-container">
       <table id="assessmentTable">
         <thead>
           <tr>
@@ -156,14 +156,14 @@
           </tr>
         </thead>
         <tbody>
-          <!-- dynamically rendered -->
+          <!-- JS populates -->
         </tbody>
       </table>
     </div>
-
   </div>
 
 </section>
+
 
   </main>
   <footer>
