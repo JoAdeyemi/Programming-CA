@@ -1,132 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset-"utf-8" />
+  <meta charset="utf-8" />
   <title>Taxpayer Registration and Assessment</title>
-  <meta name="viewport" content="width=device-width, initial scale=1" />
-  <Link rel="stylesheet" href="./styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
-  <header>
-    <h1>Taxpayer Registry and Assessments</h1>
-    <nav class="tabs">
-      <button class="tab active" data-tab="register">Register Taxpayer</button>
-      <button class="tab" data-tab="assessment">Raise Assessment</button>
-      <button class="tab" data-tab="records">Records</button>
-    </nav>
-  </header>
+
+  <h1>Taxpayer Registry and Assessments</h1>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="register">Register Taxpayer</button>
+    <button class="tab" data-tab="assessment">Raise Assessment</button>
+    <button class="tab" data-tab="records">Records</button>
+  </nav>
 
   <main>
-    <!------Section to Register new Taxpayer---->
-<!-- =========================
-     Register Taxpayer Section
-     ========================= -->
-<section id="register" class="tab-content active">
-    <h2>Register New Taxpayer</h2>
 
-    <form id="registerForm" class="grid">
+    <!-- ================= REGISTER TAB ================= -->
+    <section id="register" class="tab-content active">
 
-        <label>First name
-            <input type="text" id="firstName" required>
-        </label>
+      <h2>Register New Taxpayer</h2>
 
-        <label>Last Name
-            <input type="text" id="lastName" required>
-        </label>
+      <form id="registerForm" class="grid">
+        <label>First name</label>
+        <input id="firstName">
 
-        <label>Email
-            <input type="email" id="email" required>
-        </label>
+        <label>Last Name</label>
+        <input id="lastName">
 
-        <label>Phone Number
-            <input type="text" id="phone" placeholder="+353..." required>
-        </label>
+        <label>Email</label>
+        <input id="email">
 
-        <label>Address
-            <input type="text" id="address">
-        </label>
+        <label>Phone Number</label>
+        <input id="phone" placeholder="+353...">
 
-        <label>Date of Birth
-            <input type="date" id="dob">
-        </label>
+        <label>Address</label>
+        <input id="address">
 
-        <label>Occupation
-            <input type="text" id="occupation">
-        </label>
+        <label>Date of Birth</label>
+        <input id="dob" type="date">
 
-        <label>Annual Income (₦)
-            <input type="number" id="annualIncome" required>
-        </label>
+        <label>Occupation</label>
+        <input id="occupation">
+
+        <label>Annual Income (₦)</label>
+        <input id="annualIncome" type="number">
 
         <button type="submit">Register</button>
+      </form>
 
-        <div id="registerMsg" class="msg"></div>
-
-    </form>
-</section>
+      <div id="registerMsg" class="msg"></div>
+    </section>
 
 
-<!-- =========================
-     Raise Assessment Section
-     ========================= -->
-<section id="assessment" class="tab-content">
-    <h2>Raise Tax Assessment</h2>
 
-    <form id="assessmentForm" class="grid">
+    <!-- ================= ASSESSMENT TAB ================= -->
+    <section id="assessment" class="tab-content">
 
-        <label>Select Taxpayer
-            <select id="payerSelect"></select>
-        </label>
+      <h2>Raise Tax Assessment</h2>
 
-        <label>Tax Year
-            <input type="number" id="taxYear" value="2025">
-        </label>
+      <form id="assessmentForm" class="grid">
+        <label>Select Taxpayer</label>
+        <select id="payerSelect"></select>
 
-        <label>Declared Income (₦)
-            <input type="number" id="declaredIncome">
-        </label>
+        <label>Tax Year</label>
+        <input type="number" id="taxYear" value="2025">
 
-        <label>Other Income (₦)
-            <input type="number" id="otherIncome" value="0">
-        </label>
+        <label>Declared Income (₦)</label>
+        <input id="declaredIncome" type="number">
 
-        <label>Pension Relief Contribution (₦)
-            <input type="number" id="pensionRelief" value="0">
-        </label>
+        <label>Other Income (₦)</label>
+        <input id="otherIncome" type="number" value="0">
 
-        <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
-
-        <p>
-            <strong>Relief:</strong><br>
-            Consolidated Relief (20%): <span id="consolDisplay">₦0</span>
-        </p>
+        <label>Pension Relief Contribution (₦)</label>
+        <input id="pensionRelief" type="number" value="0">
 
         <button type="submit">Compute & Save Assessment</button>
+      </form>
 
-        <div id="assessmentResult" class="msg"></div>
+      <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
+      <p><strong>Consolidated Relief (20%):</strong> <span id="consolDisplay">₦0</span></p>
 
-    </form>
-</section>
+      <div id="assessmentResult" class="msg"></div>
+
+    </section>
 
 
-    <!----Records----->
-  
-  <section id="records" class="tab-content">
-  <div class="section-wrapper">
 
-    <h2 class="section-title">Records</h2>
+    <!-- ================= RECORDS TAB ================= -->
+    <section id="records" class="tab-content">
 
-    <div class="toolbar">
-      <input id="searchBox" type="text" placeholder="Search taxpayers by name..." />
+      <h2>Records</h2>
+
+      <input id="searchBox" placeholder="Search taxpayers by name">
       <button id="exportBtn">Export JSON</button>
       <button id="importBtn">Import JSON</button>
-      <input id="importFile" type="file" accept="application/json" style="display:none;">
-    </div>
+      <input id="importFile" type="file" style="display:none">
 
-    <!-- Registered Taxpayers Table -->
-    <div class="table-card">
       <h3>Registered Taxpayers</h3>
-
       <table id="taxpayerTable">
         <thead>
           <tr>
@@ -137,17 +113,10 @@
             <th>Annual Income (₦)</th>
           </tr>
         </thead>
-
-        <tbody>
-          <!-- JS will populate -->
-        </tbody>
+        <tbody></tbody>
       </table>
-    </div>
 
-    <!-- Tax Assessments Table -->
-    <div class="table-card" style="margin-top:30px;">
       <h3>Tax Assessments</h3>
-
       <table id="assessmentTable">
         <thead>
           <tr>
@@ -161,20 +130,13 @@
             <th>Date Created</th>
           </tr>
         </thead>
-
-        <tbody>
-          <!-- JS will populate -->
-        </tbody>
+        <tbody></tbody>
       </table>
-    </div>
 
-  </div>
-</section>
-
-    
-
+    </section>
 
   </main>
+
   <footer>
     <small>MVP • Stored in localStorage • Built with vanilla JS</small>
   </footer>
@@ -182,4 +144,5 @@
   <script src="./app.js"></script>
 
 </body>
+
 </html>
