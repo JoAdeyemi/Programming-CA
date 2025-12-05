@@ -1,102 +1,88 @@
-:root {
-  --bg: #0b1020;
-  --card: #121a33;
-  --text: #e8ecff;
-  --muted: #9fb0ff;
-  --accent: #6ea8fe;
-  --accent-2: #a6e3a1;
-  --danger: #ff8787;
-  --shadow: 0 10px 24px rgba(0,0,0,0.25);
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-  background: radial-gradient(1200px 800px at 10% 10%, #172040, #0b1020 60%);
-  color: var(--text);
-}
-header { padding: 24px 20px 10px; }
-h1 { margin: 0 0 12px; font-size: 28px; }
-h2 { margin-top: 0; }
+/* === Style.css code got from ChatGpt === */
 
-.tabs { display: flex; gap: 10px; }
-.tabs button {
-  background: transparent; border: 1px solid #274088; color: var(--text);
-  padding: 10px 14px; border-radius: 12px; cursor: pointer;
-}
-.tabs button.active { background: #1a2752; border-color: #3a5bdc; }
-
-main { padding: 20px; }
-.tab-content {
-    display: none; 
-}
-.tab-content.active {
-    display: block;
-}
-register {
-    max-width: 600px;
-    margin-left: 40px;
-    padding: 20px
-}
-.form-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.dashboard-section {
+  background: #101a37;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  margin-bottom: 28px;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
-.form-vertical input,
-.form-vertical select {
-  width: 100%;
+.dashboard-section h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 22px;
+  font-weight: 600;
+  color: #cdd9ff;
+  border-bottom: 1px solid #23315f;
+  padding-bottom: 6px;
 }
 
-
-label.wide {
-    grid-column: 1 !important;
-}
-input, select, button {
-  padding: 10px 12px; border-radius: 10px; border: 1px solid #2b3f7a; outline: none;
-  background: #0f1630; color: var(--text);
-}
-input:focus, select:focus { border-color: var(--accent); }
-
-button[type="submit"], .toolbar button {
-  background: linear-gradient(180deg, #335ef3, #2848c2);
-  border: none; color: white; font-weight: 600; box-shadow: var(--shadow);
+form.form-vertical label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #aab8ff;
 }
 
-.msg { margin-top: 10px; min-height: 22px; }
-.msg.success { color: var(--accent-2); }
-.msg.error { color: var(--danger); }
-
-.card {
-  margin-top: 14px; padding: 14px; border: 1px solid #2b3f7a; border-radius: 12px; background: #0f1630;
-}
-
-.toolbar { display: flex; gap: 10px; align-items: center; margin: 10px 0 14px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { text-align: left; border-bottom: 1px solid #27386f; padding: 10px; }
-tbody tr:hover { background: #0e1a3a; }
-
-footer { padding: 16px 20px 40px; color: var(--muted); }
-
-.notice {
-   background: #0f1630;
-  border: 2px solid #3a5bdc;
-  padding: 14px;
-  border-radius: 12px;
-  margin-top: 12px;
+form.form-vertical input,
+form.form-vertical select {
   font-size: 15px;
-  line-height: 1.5;
+  padding: 12px;
+  border-radius: 12px;
+  background: #0d142c;
+  border: 1px solid #283b78;
+  transition: border-color .25s, box-shadow .25s;
 }
 
-.notice button {
-  margin-top: 10px;
-  padding: 6px 12px;
-  background: #335ef3;
+form.form-vertical input:focus,
+form.form-vertical select:focus {
+  border-color: #5a8bff;
+  box-shadow: 0 0 0 3px rgba(90,139,255,0.15);
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #3f66ff, #2c4ad3);
   border: none;
-  color: white;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  color: #fff;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background .25s, transform .2s;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #597aff, #3756df);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.table-card {
+  background: #0f172e;
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #23315f;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+.table-card h3 {
+  margin: 0 0 12px;
+  color: #cbd5ff;
+}
+
+.tab-content {
+  animation: fadeIn .4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; margin-top: 6px; }
+  to   { opacity: 1; margin-top: 0; }
 }
 
 
