@@ -492,9 +492,11 @@ function renderTaxpayerTable(filter = "") {
         <td>${t.phone || ""}</td>
         <td>₦${(+t.annualIncome).toLocaleString()}</td>
         <td>
-          <button class="btn-inline" onclick="viewTaxpayer('${t.payerId}')">View</button>
-          <button class="btn-inline" onclick="editTaxpayer('${t.payerId}')">Edit</button>
-          <button class="btn-inline btn-danger" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
+          <div class="action-buttons">
+            <button class="btn-view" onclick="viewTaxpayer('${t.payerId}')">View</button>
+            <button class="btn-edit" onclick="editTaxpayer('${t.payerId}')">Edit</button>
+            <button class="btn-delete" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
+          </div>
         </td>
       </tr>
     `
@@ -535,9 +537,11 @@ function renderAssessmentTable() {
           <td>₦${taxDue.toLocaleString()}</td>
           <td>${created}</td>
           <td>
-            <button class="btn-inline" onclick="viewAssessment('${a.assessmentId}')">View</button>
-            <button class="btn-inline" onclick="editAssessment('${a.assessmentId}')">Edit</button>
-            <button class="btn-inline btn-danger" onclick="deleteAssessment('${a.assessmentId}')">Delete</button>
+            <div class="action-button">
+              <button class="btn-view" onclick="viewAssessment('${a.assessmentId}')">View</button>
+              <button class="btn-edit" onclick="editAssessment('${a.assessmentId}')">Edit</button>
+              <button class="btn-delete" onclick="deleteAssessment('${a.assessmentId}')">Delete</button>
+            </div>  
           </td>
         </tr>
       `;

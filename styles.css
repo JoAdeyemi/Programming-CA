@@ -74,19 +74,21 @@ input, select, button {
 
 /* === TABLE ACTION BUTTONS (View / Edit / Delete) === */
 .action-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
-  align-items: center;
+    display: flex;
+    gap: 8px;              /* space between buttons */
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .action-buttons button {
-  padding: 6px 12px;
-  font-size: 13px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+    flex: 1;               /* optional → make them equal width */
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;   /* prevents text wrapping */
 }
+
 
 /* Colors */
 .btn-view {
