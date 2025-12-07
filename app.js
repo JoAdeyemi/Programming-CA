@@ -425,6 +425,12 @@ function renderAssessmentTable() {
           <td>₦${taxable.toLocaleString()}</td>
           <td>₦${taxDue.toLocaleString()}</td>
           <td>${new Date(a.createdAt).toLocaleString()}</td>
+
+          <td class="actions">
+            <button class="btn-view" onclick="viewAssessment('${a.assessmentId}')">View</button>
+            <button class="btn-edit" onclick="editAssessment('${a.assessmentId}')">Edit</button>
+            <button class="btn-delete" onclick="deleteAssessment('${a.assessmentId}')">Delete</button>
+          </td>
         </tr>
       `;
       }).join("")

@@ -113,6 +113,40 @@ button[type="submit"] {
   grid-column: 1 / span 2;
 }
 
+/* =====================
+   ACTION BUTTONS (VIEW | EDIT | DELETE)
+   ===================== */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-view,
+.btn-edit,
+.btn-delete {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-view {
+  background: #1e90ff;
+  color: white;
+}
+
+.btn-edit {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+}
+
+
 .msg {
   grid-column: 1 / span 2;
   margin-top: 10px;
