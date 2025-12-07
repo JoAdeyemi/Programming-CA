@@ -126,6 +126,35 @@ function onRegisterSubmit(e) {
   const occupation = $("#occupation").value.trim();
   const annualIncome = parseFloat($("#annualIncome").value);
 
+    // ===== UPDATE MODE =====
+  if (window.editingPayerId) {   
+    const taxpayers = getTaxpayers();
+    const idx = taxpayers.findIndex(t => t.payerId === window.editingPayerId);
+
+    if (idx !== -1) {
+      taxpayers[idx] = {
+        ...taxpayers[idx], // keep payerId & createdAt
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+        dob,
+        occupation,
+        annualIncome,
+      };
+      setTaxpayers(taxpayers);
+    }
+
+    window.editingPayerId = null; // reset edit mode
+    toast(msgEl, "Taxpayer updated successfully.");
+    $("#registerForm").reset();
+    refreshAllTables();
+    refreshSelects();
+    return;  // STOP here — do not execute registration logic
+  }
+
+
   if (!firstName || !lastName || !email || Number.isNaN(annualIncome) || annualIncome < 0) {
     toast(msgEl, "Please fill all required fields correctly.", "error");
     return;
@@ -167,6 +196,55 @@ document.querySelector("#closeNotice").onclick = () => {
 };
 
 }
+
+// ==============================
+// EDIT TAXPAYER
+// ==============================
+function editTaxpayer(payerId) {
+  const taxpayers = getTaxpayers();
+  const t = taxpayers.find(x => x.payerId === payerId);
+
+  if (!t) return alert("Taxpayer not found.");
+
+  if (!confirm(`Edit taxpayer: ${t.firstName} ${t.lastName}?`)) return;
+
+  // Fill form with existing data
+  $("#firstName").value = t.firstName;
+  $("#lastName").value = t.lastName;
+  $("#email").value = t.email;
+  $("#phone").value = t.phone;
+  $("#address").value = t.address;
+  $("#dob").value = t.dob;
+  $("#occupation").value = t.occupation;
+  $("#annualIncome").value = t.annualIncome;
+
+  // Switch to register tab
+  document.querySelector('.tab[data-tab="register"]').click();
+
+  // Store taxpayer being edited
+  window.editingPayerId = payerId;
+}
+
+// ==============================
+// DELETE TAXPAYER
+// ==============================
+function deleteTaxpayer(payerId) {
+  const taxpayers = getTaxpayers();
+
+  const t = taxpayers.find(x => x.payerId === payerId);
+  if (!t) return;
+
+  if (!confirm(`Are you sure you want to delete ${t.firstName} ${t.lastName}?`)) return;
+
+  const updated = taxpayers.filter(x => x.payerId !== payerId);
+  setTaxpayers(updated);
+
+  refreshAllTables();
+  refreshSelects();
+
+  alert("Taxpayer removed successfully.");
+}
+
 
 /* =======================
    Assessment (UPDATED)
@@ -267,6 +345,11 @@ function renderTaxpayerTable(filter = "") {
         <td>${t.email}</td>
         <td>${t.phone || ""}</td>
         <td>€${(+t.annualIncome).toLocaleString()}</td>
+
+        <td>
+          <button class="btn-edit" onclick= "editTaxpayer('${t.payerId}')">Edit</button>
+          <button class="btn-delete" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
+        </td>
       </tr>
     `).join("");
 
@@ -374,6 +457,33 @@ function setupTabs() {
 document.addEventListener("DOMContentLoaded", setupTabs);
 
 function setupEvents() {
+
+  function editTaxpayer(payerId) {
+  const taxpayers = getTaxpayers();
+  const t = taxpayers.find(x => x.payerId === payerId);
+
+  if (!t) return alert("Taxpayer not found.");
+
+  // Load into form
+  $("#firstName").value = t.firstName;
+  $("#lastName").value = t.lastName;
+  $("#email").value = t.email;
+  $("#phone").value = t.phone;
+  $("#address").value = t.address;
+  $("#dob").value = t.dob;
+  $("#occupation").value = t.occupation;
+  $("#annualIncome").value = t.annualIncome;
+
+  // Mark as editing
+  window.editingPayerId = payerId;
+
+  // Switch to Register tab
+  document.querySelector('.tab[data-tab="register"]').click();
+
+  // Scroll to top for UX
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 
   // Register taxpayer form
   $("#registerForm").addEventListener("submit", onRegisterSubmit);
