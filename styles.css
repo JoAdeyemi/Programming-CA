@@ -72,6 +72,39 @@ input, select, button {
   color: var(--text);
 }
 
+/* === TABLE ACTION BUTTONS (View / Edit / Delete) === */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.action-buttons button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Colors */
+.btn-view {
+  background: #1d3557;
+  color: white;
+}
+
+.btn-edit {
+  background: #457b9d;
+  color: white;
+}
+
+.btn-delete {
+  background: #e63946;
+  color: white;
+}
+
+
 button[type="submit"] {
   background: linear-gradient(180deg, #335ef3, #2848c2);
   color: white;

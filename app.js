@@ -393,9 +393,10 @@ function renderTaxpayerTable(filter = "") {
         <td>€${(+t.annualIncome).toLocaleString()}</td>
 
         <td>
-          <button class="btn-delete" onclick="viewTaxpayer('${t.payerId}')">View</button>
-          <button class="btn-edit" onclick= "editTaxpayer('${t.payerId}')">Edit</button>
-          <button class="btn-delete" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
+          <div class="action-buttons">
+           <button class="btn-delete" onclick="viewTaxpayer('${t.payerId}')">View</button>
+            <button class="btn-edit" onclick= "editTaxpayer('${t.payerId}')">Edit</button>
+            <button class="btn-delete" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
         </td>
       </tr>
     `).join("");
