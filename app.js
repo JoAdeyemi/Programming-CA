@@ -1,30 +1,11 @@
 /* =======================
-   Data Model & Utilities
-   =======================
-
-Taxpayer {
-  payerId: string, // e.g., P-202511-0007
-  firstName, lastName, email, phone, address, dob, occupation,
-  annualIncome: number,
-  createdAt: ISO string
-}
-
-Assessment {
-  assessmentId: string, // e.g., A-2025-0001
-  payerId: string,
-  year: number,
-  declaredIncome: number,
-  deductions: number,
-  taxable: number,
-  taxDue: number,
-  createdAt: ISO string
-}
-*/
+   Storage & Data Model
+   ======================= */
 
 const STORAGE_KEYS = {
   taxpayers: "tax_mvp_taxpayers",
   assessments: "tax_mvp_assessments",
-  seq: "tax_mvp_sequences"
+  seq: "tax_mvp_sequences",
 };
 
 const store = {
@@ -34,7 +15,7 @@ const store = {
   },
   set(key, val) {
     localStorage.setItem(key, JSON.stringify(val));
-  }
+  },
 };
 
 function initSequences() {
@@ -78,16 +59,13 @@ function setAssessments(list) {
 }
 
 /* =======================
-   Tax Computation (Simple)
-   =======================
-   Progressive brackets (example):
-   - 0 – 36,800 @ 20%
-   - Above 36,800 @ 40%
-*/
+   Tax Computation
+   ======================= */
+
 function computeTax(taxable) {
   const band = 36800;
-  const lowRate = 0.20;
-  const highRate = 0.40;
+  const lowRate = 0.2;
+  const highRate = 0.4;
 
   const lowPart = Math.min(taxable, band);
   const highPart = Math.max(0, taxable - band);
@@ -98,25 +76,59 @@ function computeTax(taxable) {
 /* =======================
    DOM Helpers
    ======================= */
+
 const $ = (sel) => document.querySelector(sel);
-function renderOptions(selectEl, taxpayers) {
-  selectEl.innerHTML = `<option value="">-- choose --</option>` +
-    taxpayers
-      .map(t => `<option value="${t.payerId}">${t.payerId} — ${t.lastName}, ${t.firstName}</option>`)
-      .join("");
-}
+
 function toast(el, msg, type = "success") {
+  if (!el) return;
   el.textContent = msg;
   el.className = `msg ${type}`;
-  setTimeout(() => { el.textContent = ""; el.className = "msg"; }, 4000);
+  setTimeout(() => {
+    el.textContent = "";
+    el.className = "msg";
+  }, 3500);
+}
+
+function renderOptions(selectEl, taxpayers) {
+  if (!selectEl) return;
+  selectEl.innerHTML =
+    `<option value="">-- choose --</option>` +
+    taxpayers
+      .map(
+        (t) =>
+          `<option value="${t.payerId}">${t.payerId} — ${t.lastName}, ${t.firstName}</option>`
+      )
+      .join("");
 }
 
 /* =======================
-   Registration
+   Globals for Edit Mode
    ======================= */
+
+window.editingPayerId = null;
+window.editingAssessmentId = null;
+
+/* =======================
+   Registration (Create / Update)
+   ======================= */
+
+function setRegisterFormMode(mode) {
+  // mode: "create" | "update"
+  const titleEl =
+    document.querySelector("#register h2") || document.querySelector("#registerTitle");
+  const btn = $("#registerForm button[type='submit']");
+
+  if (titleEl) {
+    titleEl.textContent =
+      mode === "update" ? "Update Taxpayer" : "Register New Taxpayer";
+  }
+  if (btn) {
+    btn.textContent = mode === "update" ? "Update" : "Register";
+  }
+}
+
 function onRegisterSubmit(e) {
   e.preventDefault();
-
   const msgEl = $("#registerMsg");
 
   const firstName = $("#firstName").value.trim();
@@ -128,55 +140,57 @@ function onRegisterSubmit(e) {
   const occupation = $("#occupation").value.trim();
   const annualIncome = parseFloat($("#annualIncome").value);
 
-  // VALIDATION
   if (!firstName || !lastName || !email || Number.isNaN(annualIncome) || annualIncome < 0) {
     toast(msgEl, "Please fill all required fields correctly.", "error");
     return;
   }
 
-  let taxpayers = getTaxpayers();
+  const taxpayers = getTaxpayers();
 
-  /* ==========================================================
-     UPDATE MODE
-  ========================================================== */
-  if (window.editingAssessmentId) {
-    const assessments = getAssessments();
-    const idx = assessments.findIndex(a => a.assessmentId === window.editingAssessmentId);
-
-    if (idx !== -1) {
-        assessments[idx] = {
-            ...assessments[idx], // keep ID + createdAt
-            payerId,
-            year,
-            declaredIncome,
-            otherIncome,
-            pensionRelief,
-            totalIncome,
-            consolidatedRelief,
-            taxable,
-            taxDue
-        };
-
-        setAssessments(assessments);
-        window.editingAssessmentId = null;
-
-        // Reset UI
-        document.querySelector("#assessmentTitle").textContent = "Raise Tax Assessment";
-        document.querySelector("#computeBtn").textContent = "Compute & Save Assessment";
-
-        refreshAllTables();
-        alert("Assessment updated successfully!");
-        $("#assessmentForm").reset();
-        return;
+  // ===== UPDATE MODE =====
+  if (window.editingPayerId) {
+    const idx = taxpayers.findIndex((t) => t.payerId === window.editingPayerId);
+    if (idx === -1) {
+      toast(msgEl, "Error: taxpayer not found.", "error");
+      window.editingPayerId = null;
+      setRegisterFormMode("create");
+      return;
     }
-}
 
-  /* ==========================================================
-     CREATE MODE (New Registration)
-  ========================================================== */
+    // Prevent duplicate email (except current)
+    if (
+      taxpayers.some(
+        (t) => t.email === email && t.payerId !== window.editingPayerId
+      )
+    ) {
+      toast(msgEl, "Another taxpayer with this email already exists.", "error");
+      return;
+    }
 
-  // Prevent duplicate email
-  if (taxpayers.some(t => t.email === email)) {
+    taxpayers[idx] = {
+      ...taxpayers[idx],
+      firstName,
+      lastName,
+      email,
+      phone,
+      address,
+      dob,
+      occupation,
+      annualIncome,
+    };
+    setTaxpayers(taxpayers);
+    window.editingPayerId = null;
+    setRegisterFormMode("create");
+    $("#registerForm").reset();
+    refreshAllTables();
+    refreshSelects();
+    toast(msgEl, "Taxpayer updated successfully.");
+    return;
+  }
+
+  // ===== CREATE MODE =====
+
+  if (taxpayers.some((t) => t.email === email)) {
     toast(msgEl, "A taxpayer with this email already exists.", "error");
     return;
   }
@@ -212,162 +226,159 @@ function onRegisterSubmit(e) {
       <button id="closeNotice">Close</button>
     </div>
   `;
-
-  document.querySelector("#closeNotice").onclick = () => {
-    msgEl.innerHTML = "";
-  };
+  const closeBtn = document.querySelector("#closeNotice");
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      msgEl.innerHTML = "";
+    };
+  }
 }
 
+/* ===== Taxpayer Row Actions ===== */
 
-// ========================
-// VIEW TAXPAYER
-// ========================
 function viewTaxpayer(payerId) {
-  const t = getTaxpayers().find(x => x.payerId === payerId);
+  const t = getTaxpayers().find((x) => x.payerId === payerId);
   if (!t) return alert("Taxpayer not found.");
-
   alert(
-    `Payer ID: ${t.payerId}\n` +
-    `Name: ${t.firstName} ${t.lastName}\n` +
-    `Email: ${t.email}\n` +
-    `Phone: ${t.phone}\n` +
-    `Address: ${t.address}\n` +
-    `DOB: ${t.dob}\n` +
-    `Occupation: ${t.occupation}\n` +
-    `Annual Income: ₦${t.annualIncome.toLocaleString()}`
+    `Taxpayer Details\n\n` +
+      `ID: ${t.payerId}\n` +
+      `Name: ${t.firstName} ${t.lastName}\n` +
+      `Email: ${t.email}\n` +
+      `Phone: ${t.phone || "-"}\n` +
+      `Address: ${t.address || "-"}\n` +
+      `Annual Income: ₦${(+t.annualIncome).toLocaleString()}`
   );
 }
 
-// ==============================
-// EDIT TAXPAYER
-// ==============================
 function editTaxpayer(payerId) {
-  const taxpayers = getTaxpayers();
-  const t = taxpayers.find(x => x.payerId === payerId);
-
+  const t = getTaxpayers().find((x) => x.payerId === payerId);
   if (!t) return alert("Taxpayer not found.");
 
-  // Switch to register tab (with Update caption)
-  document.querySelector('.tab[data-tab="register"]').click();
+  // Switch to Register tab
+  const tabBtn = document.querySelector('.tab[data-tab="register"]');
+  if (tabBtn) tabBtn.click();
 
-  if (!confirm(`Edit taxpayer: ${t.firstName} ${t.lastName}?`)) return;
-
-  // Fill form with existing data
   $("#firstName").value = t.firstName;
   $("#lastName").value = t.lastName;
   $("#email").value = t.email;
-  $("#phone").value = t.phone;
-  $("#address").value = t.address;
-  $("#dob").value = t.dob;
-  $("#occupation").value = t.occupation;
-  $("#annualIncome").value = t.annualIncome;
+  $("#phone").value = t.phone || "";
+  $("#address").value = t.address || "";
+  $("#dob").value = t.dob || "";
+  $("#occupation").value = t.occupation || "";
+  $("#annualIncome").value = t.annualIncome || 0;
 
-  // Change title & button to UPDATE mode
-    document.querySelector("#register h2").textContent = "Update Taxpayer";
-    document.querySelector("#registerForm button").textContent = "Update";
-
-  // Store taxpayer being edited
   window.editingPayerId = payerId;
+  setRegisterFormMode("update");
+  alert("Editing mode activated for this taxpayer. Update fields and press Update.");
 }
 
-// ==============================
-// DELETE TAXPAYER
-// ==============================
 function deleteTaxpayer(payerId) {
-  const taxpayers = getTaxpayers();
-
-  const t = taxpayers.find(x => x.payerId === payerId);
-  if (!t) return;
-
-  if (!confirm(`Are you sure you want to delete ${t.firstName} ${t.lastName}?`)) return;
-
-  const updated = taxpayers.filter(x => x.payerId !== payerId);
-  setTaxpayers(updated);
-
+  if (!confirm("Are you sure you want to delete this taxpayer?")) return;
+  const list = getTaxpayers();
+  const filtered = list.filter((t) => t.payerId !== payerId);
+  setTaxpayers(filtered);
   refreshAllTables();
   refreshSelects();
-
-  alert("Taxpayer removed successfully.");
 }
 
+/* =======================
+   Assessment (Create / Update)
+   ======================= */
 
+function setAssessmentFormMode(mode) {
+  // mode: "create" | "update"
+  const titleEl = $("#assessmentTitle") || document.querySelector("#assessment h2");
+  const btn = $("#computeBtn") || document.querySelector("#assessmentForm button[type='submit']");
 
-function onAssessmentSubmit(e) {
-  e.preventDefault();
-
-  // =====================================================
-  // UPDATE ASSESSMENT MODE
-  // =====================================================
-  if (window.editingAssessmentId) {
-
-    const list = getAssessments();
-    const id = window.editingAssessmentId;
-    const idx = list.findIndex(a => a.assessmentId === id);
-
-    if (idx === -1) {
-      alert("Error: Assessment not found.");
-      return;
-    }
-
-    // Update fields
-    list[idx] = {
-      ...list[idx],
-      payerId: $("#payerSelect").value,
-      year: Number($("#taxYear").value),
-      declaredIncome: Number($("#declaredIncome").value),
-      otherIncome: Number($("#otherIncome").value),
-      pensionRelief: Number($("#pensionRelief").value)
-    };
-
-    setAssessments(list);
-
-    // Reset update mode
-    window.editingAssessmentId = null;
-
-    // Reset UI title & button
-    document.querySelector("#assessmentTitle").textContent = "Raise Tax Assessment";
-    document.getElementById("computeBtn").textContent = "Compute & Save Assessment";
-
-    refreshAllTables();
-    refreshSelects();
-
-    toast($("#assessmentResult"), "Assessment updated successfully.");
-
-    return; // IMPORTANT!
+  if (titleEl) {
+    titleEl.textContent =
+      mode === "update" ? "Tax Assessment Update" : "Raise Tax Assessment";
   }
+  if (btn) {
+    btn.textContent =
+      mode === "update" ? "Update & Save Assessment" : "Compute & Save Assessment";
+  }
+}
 
-
+function gatherAssessmentInputs() {
   const payerId = $("#payerSelect").value;
   const year = parseInt($("#taxYear").value, 10);
-
   const declaredIncome = parseFloat($("#declaredIncome").value) || 0;
   const otherIncome = parseFloat($("#otherIncome").value) || 0;
   const pensionRelief = parseFloat($("#pensionRelief").value) || 0;
 
+  return { payerId, year, declaredIncome, otherIncome, pensionRelief };
+}
+
+function computeAssessmentFigures(inputs) {
+  const { declaredIncome, otherIncome, pensionRelief } = inputs;
+  const totalIncome = declaredIncome + otherIncome;
+  const deductions = 0;
+  const consolidatedRelief = +(totalIncome * 0.2).toFixed(2);
+
+  let taxable = totalIncome - pensionRelief - consolidatedRelief;
+  if (taxable < 0) taxable = 0;
+
+  const taxDue = computeTax(taxable);
+
+  return { totalIncome, deductions, consolidatedRelief, taxable, taxDue };
+}
+
+function onAssessmentSubmit(e) {
+  e.preventDefault();
+
+  const msgEl = $("#assessmentResult");
+  const inputs = gatherAssessmentInputs();
+  const { payerId, year } = inputs;
+
   if (!payerId || isNaN(year)) {
-    $("#assessmentResult").innerHTML =
+    msgEl.innerHTML =
       `<p class="msg error">Please select a taxpayer and enter a valid year.</p>`;
     return;
   }
 
-  // 1. Total income
-  const totalIncome = declaredIncome + otherIncome;
+  const figures = computeAssessmentFigures(inputs);
+  const allAssessments = getAssessments();
 
-  // 2. Allowable deductions (10%)
-  const deductions = 0
+  // =======================
+  // UPDATE ASSESSMENT MODE
+  // =======================
+  if (window.editingAssessmentId) {
+    const id = window.editingAssessmentId;
+    const idx = allAssessments.findIndex((a) => a.assessmentId === id);
+    if (idx === -1) {
+      alert("Error: Assessment not found.");
+      window.editingAssessmentId = null;
+      setAssessmentFormMode("create");
+      return;
+    }
 
-  // 3. Consolidated relief (20% of total)
-  const consolidatedRelief = +(totalIncome * 0.20).toFixed(2);
+    allAssessments[idx] = {
+      ...allAssessments[idx],
+      payerId,
+      year,
+      declaredIncome: inputs.declaredIncome,
+      otherIncome: inputs.otherIncome,
+      pensionRelief: inputs.pensionRelief,
+      totalIncome: figures.totalIncome,
+      deductions: figures.deductions,
+      consolidatedRelief: figures.consolidatedRelief,
+      taxable: figures.taxable,
+      taxDue: figures.taxDue,
+    };
 
-  // 4. Taxable income
-  let taxable =
-    totalIncome -
-    pensionRelief -
-    consolidatedRelief;
+    setAssessments(allAssessments);
+    window.editingAssessmentId = null;
+    setAssessmentFormMode("create");
+    refreshAllTables();
+    refreshSelects();
+    toast(msgEl, "Assessment updated successfully.");
+    return;
+  }
 
-  if (taxable < 0) taxable = 0;
-
-  const taxDue = computeTax(taxable);
+  // =======================
+  // CREATE NEW ASSESSMENT
+  // =======================
 
   const assessmentId = nextAssessmentId(year);
 
@@ -375,191 +386,188 @@ function onAssessmentSubmit(e) {
     assessmentId,
     payerId,
     year,
-    declaredIncome,
-    otherIncome,
-    totalIncome,
-    deductions,
-    pensionRelief,
-    consolidatedRelief,
-    taxable,
-    taxDue,
-    createdAt: new Date().toISOString()
+    declaredIncome: inputs.declaredIncome,
+    otherIncome: inputs.otherIncome,
+    totalIncome: figures.totalIncome,
+    deductions: figures.deductions,
+    pensionRelief: inputs.pensionRelief,
+    consolidatedRelief: figures.consolidatedRelief,
+    taxable: figures.taxable,
+    taxDue: figures.taxDue,
+    createdAt: new Date().toISOString(),
   };
 
-  const assessments = getAssessments();
-  assessments.push(assessment);
-  setAssessments(assessments);
+  allAssessments.push(assessment);
+  setAssessments(allAssessments);
 
   refreshAllTables();
 
-  const resEl = $("#assessmentResult");
-  resEl.innerHTML = `
+  msgEl.innerHTML = `
     <h3>Assessment Created</h3>
     <p><strong>Payer:</strong> ${payerId}</p>
-    <p><strong>Declared Income:</strong> ₦${declaredIncome.toLocaleString()}</p>
-    <p><strong>Other Income:</strong> ₦${otherIncome.toLocaleString()}</p>
-    <p><strong>Total Income:</strong> ₦${totalIncome.toLocaleString()}</p>
-    <p><strong>Pension Relief:</strong> ₦${pensionRelief.toLocaleString()}</p>
-    <p><strong>Consolidated Relief (20%):</strong> ₦${consolidatedRelief.toLocaleString()}</p>
-    <p><strong>Taxable Income:</strong> ₦${taxable.toLocaleString()}</p>
-    <p><strong>Tax Due:</strong> ₦${taxDue.toLocaleString()}</p>
+    <p><strong>Declared Income:</strong> ₦${inputs.declaredIncome.toLocaleString()}</p>
+    <p><strong>Other Income:</strong> ₦${inputs.otherIncome.toLocaleString()}</p>
+    <p><strong>Total Income:</strong> ₦${figures.totalIncome.toLocaleString()}</p>
+    <p><strong>Pension Relief:</strong> ₦${inputs.pensionRelief.toLocaleString()}</p>
+    <p><strong>Consolidated Relief (20%):</strong> ₦${figures.consolidatedRelief.toLocaleString()}</p>
+    <p><strong>Taxable Income:</strong> ₦${figures.taxable.toLocaleString()}</p>
+    <p><strong>Tax Due:</strong> ₦${figures.taxDue.toLocaleString()}</p>
   `;
 }
 
+/* ===== Assessment Row Actions ===== */
 
+function viewAssessment(assessmentId) {
+  const a = getAssessments().find((x) => x.assessmentId === assessmentId);
+  if (!a) return alert("Assessment not found.");
+  alert(
+    `Assessment Details\n\n` +
+      `ID: ${a.assessmentId}\n` +
+      `Payer ID: ${a.payerId}\n` +
+      `Year: ${a.year}\n` +
+      `Declared Income: ₦${(+a.declaredIncome || 0).toLocaleString()}\n` +
+      `Other Income: ₦${(+a.otherIncome || 0).toLocaleString()}\n` +
+      `Pension Relief: ₦${(+a.pensionRelief || 0).toLocaleString()}\n` +
+      `Consolidated Relief: ₦${(+a.consolidatedRelief || 0).toLocaleString()}\n` +
+      `Taxable: ₦${(+a.taxable || 0).toLocaleString()}\n` +
+      `Tax Due: ₦${(+a.taxDue || 0).toLocaleString()}`
+  );
+}
+
+function editAssessment(assessmentId) {
+  const a = getAssessments().find((x) => x.assessmentId === assessmentId);
+  if (!a) return alert("Assessment not found.");
+
+  // Switch to Assessment tab
+  const tabBtn = document.querySelector('.tab[data-tab="assessment"]');
+  if (tabBtn) tabBtn.click();
+
+  $("#payerSelect").value = a.payerId;
+  $("#taxYear").value = a.year;
+  $("#declaredIncome").value = a.declaredIncome;
+  $("#otherIncome").value = a.otherIncome;
+  $("#pensionRelief").value = a.pensionRelief || 0;
+
+  updateIncomeCalculations();
+
+  window.editingAssessmentId = assessmentId;
+  setAssessmentFormMode("update");
+
+  alert("Editing mode activated for this assessment. Update fields and press Update & Save Assessment.");
+}
+
+function deleteAssessment(assessmentId) {
+  if (!confirm("Are you sure you want to delete this assessment?")) return;
+  const list = getAssessments();
+  const filtered = list.filter((a) => a.assessmentId !== assessmentId);
+  setAssessments(filtered);
+  refreshAllTables();
+}
 
 /* =======================
-   Records (Tables/Search)
+   Records Rendering
    ======================= */
+
 function renderTaxpayerTable(filter = "") {
   const tbody = $("#taxpayerTable tbody");
+  if (!tbody) return;
+
   const list = getTaxpayers();
-  const term = filter.trim().toLowerCase();
+  const term = (filter || "").trim().toLowerCase();
 
   const rows = list
-    .filter(t =>
-      !term ||
-      t.payerId.toLowerCase().includes(term) ||
-      t.email.toLowerCase().includes(term) ||
-      `${t.firstName} ${t.lastName}`.toLowerCase().includes(term)
+    .filter(
+      (t) =>
+        !term ||
+        t.payerId.toLowerCase().includes(term) ||
+        t.email.toLowerCase().includes(term) ||
+        `${t.firstName} ${t.lastName}`.toLowerCase().includes(term)
     )
-    .map(t => `
+    .map(
+      (t) => `
       <tr>
         <td>${t.payerId}</td>
         <td>${t.lastName}, ${t.firstName}</td>
         <td>${t.email}</td>
         <td>${t.phone || ""}</td>
-        <td>€${(+t.annualIncome).toLocaleString()}</td>
-
+        <td>₦${(+t.annualIncome).toLocaleString()}</td>
         <td>
-          <div class="action-buttons">
-           <button class="btn-delete" onclick="viewTaxpayer('${t.payerId}')">View</button>
-            <button class="btn-edit" onclick= "editTaxpayer('${t.payerId}')">Edit</button>
-            <button class="btn-delete" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
+          <button class="btn-inline" onclick="viewTaxpayer('${t.payerId}')">View</button>
+          <button class="btn-inline" onclick="editTaxpayer('${t.payerId}')">Edit</button>
+          <button class="btn-inline btn-danger" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
         </td>
       </tr>
-    `).join("");
+    `
+    )
+    .join("");
 
-  tbody.innerHTML = rows || `<tr><td colspan="5" style="opacity:.7">No taxpayers yet.</td></tr>`;
+  tbody.innerHTML =
+    rows || `<tr><td colspan="6" style="opacity:.7">No taxpayers yet.</td></tr>`;
 }
 
 function renderAssessmentTable() {
   const tbody = $("#assessmentTable tbody");
+  if (!tbody) return;
+
   const list = getAssessments();
 
   tbody.innerHTML = list.length
-    ? list.slice().reverse().map(a => {
-        const declared = Number(a.declaredIncome || 0);
-        const other = Number(a.otherIncome || 0);
-        const taxable = Number(a.taxable || 0);
-        const taxDue = Number(a.taxDue || 0);
+    ? list
+        .slice()
+        .reverse()
+        .map((a) => {
+          const declared = Number(a.declaredIncome || 0);
+          const other = Number(a.otherIncome || 0);
+          const taxable = Number(a.taxable || 0);
+          const taxDue = Number(a.taxDue || 0);
+          const created = a.createdAt
+            ? new Date(a.createdAt).toLocaleString()
+            : "";
 
-        return `
+          return `
         <tr>
           <td>${a.assessmentId}</td>
           <td>${a.payerId}</td>
           <td>${a.year}</td>
-          <td>₦${a.declaredIncome.toLocaleString()}</td>
-          <td>₦${a.otherIncome.toLocaleString()}</td>
-          <td>₦${a.taxable.toLocaleString()}</td>
-          <td>₦${a.taxDue.toLocaleString()}</td>
-          <td>${new Date(a.createdAt).toLocaleString()}</td>
-          <td class="action-buttons">
-            <button class="btn-view" onclick="viewAssessment('${a.assessmentId}')">View</button>
-            <button class="btn-edit" onclick="editAssessment('${a.assessmentId}')">Edit</button>
-            <button class="btn-delete" onclick="deleteAssessment('${a.assessmentId}')">Delete</button>
-   </td>
-</tr>
-
+          <td>₦${declared.toLocaleString()}</td>
+          <td>₦${other.toLocaleString()}</td>
+          <td>₦${taxable.toLocaleString()}</td>
+          <td>₦${taxDue.toLocaleString()}</td>
+          <td>${created}</td>
+          <td>
+            <button class="btn-inline" onclick="viewAssessment('${a.assessmentId}')">View</button>
+            <button class="btn-inline" onclick="editAssessment('${a.assessmentId}')">Edit</button>
+            <button class="btn-inline btn-danger" onclick="deleteAssessment('${a.assessmentId}')">Delete</button>
+          </td>
+        </tr>
       `;
-      }).join("")
-    : `<tr><td colspan="8" style="opacity:.7">No assessments yet.</td></tr>`;
+        })
+        .join("")
+    : `<tr><td colspan="9" style="opacity:.7">No assessments yet.</td></tr>`;
 }
-
 
 function refreshSelects() {
   renderOptions($("#payerSelect"), getTaxpayers());
 }
 
 function refreshAllTables() {
-  renderTaxpayerTable($("#searchBox").value || "");
+  renderTaxpayerTable($("#searchBox") ? $("#searchBox").value : "");
   renderAssessmentTable();
 }
 
-function viewAssessment(assessmentId) {
-  const assessments = getAssessments();
-  const a = assessments.find(x => x.assessmentId === assessmentId);
-
-  if (!a) return alert("Assessment not found.");
-
-  alert(
-    "Assessment Details\n\n" +
-    `Assessment ID: ${a.assessmentId}\n` +
-    `Payer ID: ${a.payerId}\n` +
-    `Year: ${a.year}\n` +
-    `Declared Income: ₦${a.declaredIncome.toLocaleString()}\n` +
-    `Other Income: ₦${a.otherIncome.toLocaleString()}\n` +
-    `Pension Relief: ₦${a.pensionRelief.toLocaleString()}\n` +
-    `Consolidated Relief: ₦${a.consolidatedRelief.toLocaleString()}\n` +
-    `Taxable Income: ₦${a.taxable.toLocaleString()}\n` +
-    `Tax Due: ₦${a.taxDue.toLocaleString()}\n` +
-    `Date Created: ${new Date(a.createdAt).toLocaleString()}`
-  );
-}
-
-
-function deleteAssessment(assessmentId) {
-  if (!confirm("Are you sure you want to delete this assessment?")) return;
-
-  let list = getAssessments();
-  list = list.filter(a => a.assessmentId !== assessmentId);
-  setAssessments(list);
-
-  refreshAllTables();
-  alert("Assessment deleted.");
-}
-
-
-function editAssessment(assessmentId) {
-    const list = getAssessments();
-    const a = list.find(x => x.assessmentId === assessmentId);
-
-    if (!a) return alert("Assessment not found.");
-
-    // Switch to assessment tab
-    document.querySelector('.tab[data-tab="assessment"]').click();
-
-    // Fill form
-    $("#payerSelect").value = a.payerId;
-    $("#taxYear").value = a.year;
-    $("#declaredIncome").value = a.declaredIncome;
-    $("#otherIncome").value = a.otherIncome;
-    $("#pensionRelief").value = a.pensionRelief;
-
-    updateIncomeCalculations();
-
-    // Switch UI into update mode
-    window.editingAssessmentId = assessmentId;
-    document.querySelector("#assessmentTitle").textContent = "Tax Assessment Update";
-    document.getElementById("computeBtn").textContent = "Update Assessment";
-
-    alert("Editing mode activated. Modify the form and click 'Update Assessment'.");
-}
-
-
-
-
-
 /* =======================
-   Import/Export
+   Import / Export JSON
    ======================= */
+
 function exportJSON() {
   const payload = {
     taxpayers: getTaxpayers(),
     assessments: getAssessments(),
-    sequences: store.get(STORAGE_KEYS.seq, { payer: 0, assess: 0 })
+    sequences: store.get(STORAGE_KEYS.seq, { payer: 0, assess: 0 }),
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: "application/json",
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -583,7 +591,8 @@ function importJSON(file) {
       refreshAllTables();
       refreshSelects();
       alert("Import successful.");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to parse JSON.");
     }
   };
@@ -593,17 +602,22 @@ function importJSON(file) {
 /* =======================
    Tabs & Event Bindings
    ======================= */
+
 function setupTabs() {
   const tabs = document.querySelectorAll(".tab");
   const sections = document.querySelectorAll(".tab-content");
-  tabs.forEach(tab => {
-    tab.addEventListener("click", () => {
-      tabs.forEach(b => b.classList.remove("active"));
-      tab.classList.add("active");
-      sections.forEach(s => s.classList.remove("active"));
-      const targetId = tab.dataset.tab;
-      document.getElementById(targetId).classList.add("active");
 
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((b) => b.classList.remove("active"));
+      tab.classList.add("active");
+
+      sections.forEach((s) => s.classList.remove("active"));
+      const targetId = tab.dataset.tab;
+      const target = document.getElementById(targetId);
+      if (target) target.classList.add("active");
+
+      // Ensure taxpayer dropdown is always fresh in assessment tab
       if (targetId === "assessment") {
         refreshSelects();
       }
@@ -611,118 +625,88 @@ function setupTabs() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", setupTabs);
-
-function setupEvents() {
-
-  function editTaxpayer(payerId) {
-  const taxpayers = getTaxpayers();
-  const t = taxpayers.find(x => x.payerId === payerId);
-
-  if (!t) return alert("Taxpayer not found.");
-
-  // Load into form
-  $("#firstName").value = t.firstName;
-  $("#lastName").value = t.lastName;
-  $("#email").value = t.email;
-  $("#phone").value = t.phone;
-  $("#address").value = t.address;
-  $("#dob").value = t.dob;
-  $("#occupation").value = t.occupation;
-  $("#annualIncome").value = t.annualIncome;
-
-  // Mark as editing
-  window.editingPayerId = payerId;
-
-  // Switch to Register tab
-  document.querySelector('.tab[data-tab="register"]').click();
-
-  // Scroll to top for UX
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-
-  // Register taxpayer form
-  $("#registerForm").addEventListener("submit", onRegisterSubmit);
-
-  // Assessment form
-  $("#assessmentForm").addEventListener("submit", onAssessmentSubmit);
-
-  // Search taxpayers
-  $("#searchBox").addEventListener("input", (e) => {
-    renderTaxpayerTable(e.target.value);
-  });
-
-  // When selecting a taxpayer, auto-load declared income
-$("#payerSelect").addEventListener("change", () => {
-  const payerId = $("#payerSelect").value;
-  const taxpayers = getTaxpayers();
-  const t = taxpayers.find(x => x.payerId === payerId);
-
-  if (t) {
-    const income = parseFloat(t.annualIncome) || 0;
-    $("#declaredIncome").value = income;
-
-    // Auto-update total income and relief
-    updateIncomeCalculations();
-  }
-});
-
-// When "Other Income" changes, update total income & relief
-$("#declaredIncome").addEventListener("input", updateIncomeCalculations);
-$("#otherIncome").addEventListener("input", updateIncomeCalculations);
-$("#pensionRelief").addEventListener("input", updateIncomeCalculations);
-
-// Reusable function
 function updateIncomeCalculations() {
-  const declared = parseFloat($("#declaredIncome").value) || 0;
-  const other = parseFloat($("#otherIncome").value) || 0;
-  const pensionRelief = parseFloat($("#pensionRelief").value) || 0;
-
+  const declared = parseFloat($("#declaredIncome")?.value || "0") || 0;
+  const other = parseFloat($("#otherIncome")?.value || "0") || 0;
   const total = declared + other;
 
-    const consolidatedRelief = +(total * 0.20).toFixed(2);
+  const consolidatedRelief = +(total * 0.2).toFixed(2);
 
-  $("#totalIncomeDisplay").textContent = `₦${total.toLocaleString()}`;
-  $("#consolDisplay").textContent = `₦${consolidatedRelief.toLocaleString()}`;
+  const totalEl = $("#totalIncomeDisplay");
+  const consolEl = $("#consolDisplay");
+
+  if (totalEl) totalEl.textContent = `₦${total.toLocaleString()}`;
+  if (consolEl) consolEl.textContent = `₦${consolidatedRelief.toLocaleString()}`;
 }
 
+function setupEvents() {
+  // Register form
+  const regForm = $("#registerForm");
+  if (regForm) {
+    regForm.addEventListener("submit", onRegisterSubmit);
+  }
 
+  // Assessment form
+  const assessForm = $("#assessmentForm");
+  if (assessForm) {
+    assessForm.addEventListener("submit", onAssessmentSubmit);
+  }
 
-  // Export JSON
-  $("#exportBtn").addEventListener("click", exportJSON);
+  // Search box
+  const search = $("#searchBox");
+  if (search) {
+    search.addEventListener("input", (e) => {
+      renderTaxpayerTable(e.target.value);
+    });
+  }
 
-  
-  // Import JSON triggers hidden file input
-  $("#importBtn").addEventListener("click", () => {
-    $("#importFile").click();
+  // Payer selection auto-load declared income
+  const payerSel = $("#payerSelect");
+  if (payerSel) {
+    payerSel.addEventListener("change", () => {
+      const payerId = payerSel.value;
+      const taxpayers = getTaxpayers();
+      const t = taxpayers.find((x) => x.payerId === payerId);
+      if (t) {
+        $("#declaredIncome").value = parseFloat(t.annualIncome) || 0;
+      }
+      updateIncomeCalculations();
+    });
+  }
+
+  // Income & pension fields live update
+  ["#declaredIncome", "#otherIncome", "#pensionRelief"].forEach((id) => {
+    const el = $(id);
+    if (el) el.addEventListener("input", updateIncomeCalculations);
   });
 
-  // Handle JSON file selection
-  $("#importFile").addEventListener("change", (e) => {
-    if (e.target.files?.[0]) {
-      importJSON(e.target.files[0]);
-    }
-  });
+  // Export / Import
+  const exportBtn = $("#exportBtn");
+  const importBtn = $("#importBtn");
+  const importFile = $("#importFile");
 
+  if (exportBtn) exportBtn.addEventListener("click", exportJSON);
+  if (importBtn && importFile) {
+    importBtn.addEventListener("click", () => importFile.click());
+    importFile.addEventListener("change", (e) => {
+      if (e.target.files?.[0]) {
+        importJSON(e.target.files[0]);
+        e.target.value = "";
+      }
+    });
+  }
 }
-
 
 /* =======================
    Bootstrap
    ======================= */
+
 (function bootstrap() {
   initSequences();
   setupTabs();
   setupEvents();
-
-  // Force render tables on load
   refreshAllTables();
   refreshSelects();
-
-  // Force tab initialization (critical fix)
-  document.querySelector('.tab[data-tab="records"]').click();
-  document.querySelector('.tab[data-tab="register"]').click();
+  setRegisterFormMode("create");
+  setAssessmentFormMode("create");
 })();
-
-
