@@ -292,56 +292,50 @@ function deleteTaxpayer(payerId) {
 
 
 
-// =======================
-// UPDATE ASSESSMENT MODE
-// =======================
-if (window.editingAssessmentId) {
+function onAssessmentSubmit(e) {
+  e.preventDefault();
+
+  // =====================================================
+  // UPDATE ASSESSMENT MODE
+  // =====================================================
+  if (window.editingAssessmentId) {
 
     const list = getAssessments();
     const id = window.editingAssessmentId;
     const idx = list.findIndex(a => a.assessmentId === id);
 
     if (idx === -1) {
-        alert("Error: Assessment not found.");
-        return;
+      alert("Error: Assessment not found.");
+      return;
     }
 
-    // Update the record
-    const updated = {
-        ...list[idx],
-        payerId: $("#payerSelect").value,
-        year: Number($("#taxYear").value),
-        declaredIncome: Number($("#declaredIncome").value),
-        otherIncome: Number($("#otherIncome").value),
-        pensionRelief: Number($("#pensionRelief").value)
+    // Update fields
+    list[idx] = {
+      ...list[idx],
+      payerId: $("#payerSelect").value,
+      year: Number($("#taxYear").value),
+      declaredIncome: Number($("#declaredIncome").value),
+      otherIncome: Number($("#otherIncome").value),
+      pensionRelief: Number($("#pensionRelief").value)
     };
 
-    // Recompute totals
-    const total = updated.declaredIncome + updated.otherIncome;
-    updated.totalIncome = total;
-    updated.consolidatedRelief = +(total * 0.20).toFixed(2);
-    updated.taxable = Math.max(
-        0,
-        total - updated.pensionRelief - updated.consolidatedRelief
-    );
-    updated.taxDue = computeTax(updated.taxable);
-
-    list[idx] = updated;
     setAssessments(list);
 
-    // Reset edit mode UI
+    // Reset update mode
     window.editingAssessmentId = null;
+
+    // Reset UI title & button
     document.querySelector("#assessmentTitle").textContent = "Raise Tax Assessment";
     document.getElementById("computeBtn").textContent = "Compute & Save Assessment";
 
     refreshAllTables();
     refreshSelects();
 
-    $("#assessmentResult").innerHTML =
-        `<p class="msg success">Assessment updated successfully.</p>`;
+    toast($("#assessmentResult"), "Assessment updated successfully.");
 
-    return; // STOP — do not run the creation logic
-}
+    return; // IMPORTANT!
+  }
+
 
   const payerId = $("#payerSelect").value;
   const year = parseInt($("#taxYear").value, 10);
