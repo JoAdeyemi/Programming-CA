@@ -291,41 +291,57 @@ function deleteTaxpayer(payerId) {
 }
 
 
-/* =======================
-   Assessment (UPDATED)
-   ======================= */
-function onAssessmentSubmit(e) {
-  e.preventDefault();
 
-  if (window.editingAssessmentId) {
+// =======================
+// UPDATE ASSESSMENT MODE
+// =======================
+if (window.editingAssessmentId) {
+
     const list = getAssessments();
-    const idx = list.findIndex(a => a.assessmentId === window.editingAssessmentId);
+    const id = window.editingAssessmentId;
+    const idx = list.findIndex(a => a.assessmentId === id);
 
-    if (idx !== -1) {
-      list[idx] = {
-        ...list[idx],
-        payerId,
-        year,
-        declaredIncome,
-        otherIncome,
-        pensionRelief,
-        consolidatedRelief,
-        totalIncome,
-        taxable,
-        taxDue
-      };
-      setAssessments(list);
+    if (idx === -1) {
+        alert("Error: Assessment not found.");
+        return;
     }
 
+    // Update the record
+    const updated = {
+        ...list[idx],
+        payerId: $("#payerSelect").value,
+        year: Number($("#taxYear").value),
+        declaredIncome: Number($("#declaredIncome").value),
+        otherIncome: Number($("#otherIncome").value),
+        pensionRelief: Number($("#pensionRelief").value)
+    };
+
+    // Recompute totals
+    const total = updated.declaredIncome + updated.otherIncome;
+    updated.totalIncome = total;
+    updated.consolidatedRelief = +(total * 0.20).toFixed(2);
+    updated.taxable = Math.max(
+        0,
+        total - updated.pensionRelief - updated.consolidatedRelief
+    );
+    updated.taxDue = computeTax(updated.taxable);
+
+    list[idx] = updated;
+    setAssessments(list);
+
+    // Reset edit mode UI
     window.editingAssessmentId = null;
     document.querySelector("#assessmentTitle").textContent = "Raise Tax Assessment";
     document.getElementById("computeBtn").textContent = "Compute & Save Assessment";
+
     refreshAllTables();
     refreshSelects();
-    toast($("#assessmentResult"), "Assessment updated successfully.");
-    return;
-}
 
+    $("#assessmentResult").innerHTML =
+        `<p class="msg success">Assessment updated successfully.</p>`;
+
+    return; // STOP — do not run the creation logic
+}
 
   const payerId = $("#payerSelect").value;
   const year = parseInt($("#taxYear").value, 10);
@@ -449,18 +465,18 @@ function renderAssessmentTable() {
           <td>${a.assessmentId}</td>
           <td>${a.payerId}</td>
           <td>${a.year}</td>
-          <td>₦${declared.toLocaleString()}</td>
-          <td>₦${other.toLocaleString()}</td>
-          <td>₦${taxable.toLocaleString()}</td>
-          <td>₦${taxDue.toLocaleString()}</td>
+          <td>₦${a.declaredIncome.toLocaleString()}</td>
+          <td>₦${a.otherIncome.toLocaleString()}</td>
+          <td>₦${a.taxable.toLocaleString()}</td>
+          <td>₦${a.taxDue.toLocaleString()}</td>
           <td>${new Date(a.createdAt).toLocaleString()}</td>
-
-          <td class="actions">
+          <td class="action-buttons">
             <button class="btn-view" onclick="viewAssessment('${a.assessmentId}')">View</button>
             <button class="btn-edit" onclick="editAssessment('${a.assessmentId}')">Edit</button>
             <button class="btn-delete" onclick="deleteAssessment('${a.assessmentId}')">Delete</button>
-          </td>
-        </tr>
+   </td>
+</tr>
+
       `;
       }).join("")
     : `<tr><td colspan="8" style="opacity:.7">No assessments yet.</td></tr>`;
@@ -511,36 +527,31 @@ function deleteAssessment(assessmentId) {
 
 
 function editAssessment(assessmentId) {
-  const list = getAssessments();
-  const a = list.find(x => x.assessmentId === assessmentId);
+    const list = getAssessments();
+    const a = list.find(x => x.assessmentId === assessmentId);
 
-  if (!a) {
-    alert("Assessment not found.");
-    return;
-  }
+    if (!a) return alert("Assessment not found.");
 
-  // Switch to Assessment tab
-  document.querySelector('.tab[data-tab="assessment"]').click();
+    // Switch to assessment tab
+    document.querySelector('.tab[data-tab="assessment"]').click();
 
-  // Update UI headings + button text
-  document.querySelector("#assessmentTitle").textContent = "Update Tax Assessment";
-  document.querySelector("#computeBtn").textContent = "Update & Save Assessment";
+    // Fill form
+    $("#payerSelect").value = a.payerId;
+    $("#taxYear").value = a.year;
+    $("#declaredIncome").value = a.declaredIncome;
+    $("#otherIncome").value = a.otherIncome;
+    $("#pensionRelief").value = a.pensionRelief;
 
-  // Fill form values
-  $("#payerSelect").value = a.payerId;
-  $("#taxYear").value = a.year;
-  $("#declaredIncome").value = a.declaredIncome;
-  $("#otherIncome").value = a.otherIncome;
-  $("#pensionRelief").value = a.pensionRelief;
+    updateIncomeCalculations();
 
-  // Update displayed totals
-  updateIncomeCalculations();
+    // Switch UI into update mode
+    window.editingAssessmentId = assessmentId;
+    document.querySelector("#assessmentTitle").textContent = "Tax Assessment Update";
+    document.getElementById("computeBtn").textContent = "Update Assessment";
 
-  // Activate edit mode
-  window.editingAssessmentId = assessmentId;
-
-  alert("Editing mode activated. Update the form and press Save.");
+    alert("Editing mode activated. Modify the form and click 'Update Assessment'.");
 }
+
 
 
 
