@@ -116,7 +116,9 @@ function toast(el, msg, type = "success") {
    ======================= */
 function onRegisterSubmit(e) {
   e.preventDefault();
+
   const msgEl = $("#registerMsg");
+
   const firstName = $("#firstName").value.trim();
   const lastName = $("#lastName").value.trim();
   const email = $("#email").value.trim().toLowerCase();
@@ -126,14 +128,23 @@ function onRegisterSubmit(e) {
   const occupation = $("#occupation").value.trim();
   const annualIncome = parseFloat($("#annualIncome").value);
 
-    // ===== UPDATE MODE =====
-  if (window.editingPayerId) {   
-    const taxpayers = getTaxpayers();
+  // VALIDATION
+  if (!firstName || !lastName || !email || Number.isNaN(annualIncome) || annualIncome < 0) {
+    toast(msgEl, "Please fill all required fields correctly.", "error");
+    return;
+  }
+
+  let taxpayers = getTaxpayers();
+
+  /* ==========================================================
+     UPDATE MODE
+  ========================================================== */
+  if (window.editingPayerId) {
     const idx = taxpayers.findIndex(t => t.payerId === window.editingPayerId);
 
     if (idx !== -1) {
       taxpayers[idx] = {
-        ...taxpayers[idx], // keep payerId & createdAt
+        ...taxpayers[idx],   // keep payerId + createdAt unchanged
         firstName,
         lastName,
         email,
@@ -143,24 +154,27 @@ function onRegisterSubmit(e) {
         occupation,
         annualIncome,
       };
+
       setTaxpayers(taxpayers);
     }
 
-    window.editingPayerId = null; // reset edit mode
+    // Reset the edit mode
+    window.editingPayerId = null;
+
+    // Reset button + header back to registration mode
+    document.querySelector("#register h2").textContent = "Register New Taxpayer";
+    document.querySelector("#registerForm button").textContent = "Register";
+
     toast(msgEl, "Taxpayer updated successfully.");
     $("#registerForm").reset();
     refreshAllTables();
     refreshSelects();
-    return;  // STOP here — do not execute registration logic
+    return;   // stop here
   }
 
-
-  if (!firstName || !lastName || !email || Number.isNaN(annualIncome) || annualIncome < 0) {
-    toast(msgEl, "Please fill all required fields correctly.", "error");
-    return;
-  }
-
-  const taxpayers = getTaxpayers();
+  /* ==========================================================
+     CREATE MODE (New Registration)
+  ========================================================== */
 
   // Prevent duplicate email
   if (taxpayers.some(t => t.email === email)) {
@@ -171,30 +185,58 @@ function onRegisterSubmit(e) {
   const payerId = nextPayerId();
   const record = {
     payerId,
-    firstName, lastName, email, phone, address, dob, occupation,
+    firstName,
+    lastName,
+    email,
+    phone,
+    address,
+    dob,
+    occupation,
     annualIncome,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
 
   taxpayers.push(record);
   setTaxpayers(taxpayers);
+
   $("#registerForm").reset();
   refreshAllTables();
   refreshSelects();
-msgEl.innerHTML = `
-<div class="notice">
-Registration Successful!<br>
-<strong>Payer ID:</strong> ${payerId}<br><br>
-This ID has been generated and recorded.<br>
-Please keep it safe.
-<br><br>
-<button id="closeNotice">Close</button>
-</div>
-`;
-document.querySelector("#closeNotice").onclick = () => {
-  msgEl.innerHTML = "";
-};
 
+  msgEl.innerHTML = `
+    <div class="notice">
+      Registration Successful!<br>
+      <strong>Payer ID:</strong> ${payerId}<br><br>
+      This ID has been generated and recorded.<br>
+      Please keep it safe.
+      <br><br>
+      <button id="closeNotice">Close</button>
+    </div>
+  `;
+
+  document.querySelector("#closeNotice").onclick = () => {
+    msgEl.innerHTML = "";
+  };
+}
+
+
+// ========================
+// VIEW TAXPAYER
+// ========================
+function viewTaxpayer(payerId) {
+  const t = getTaxpayers().find(x => x.payerId === payerId);
+  if (!t) return alert("Taxpayer not found.");
+
+  alert(
+    `Payer ID: ${t.payerId}\n` +
+    `Name: ${t.firstName} ${t.lastName}\n` +
+    `Email: ${t.email}\n` +
+    `Phone: ${t.phone}\n` +
+    `Address: ${t.address}\n` +
+    `DOB: ${t.dob}\n` +
+    `Occupation: ${t.occupation}\n` +
+    `Annual Income: ₦${t.annualIncome.toLocaleString()}`
+  );
 }
 
 // ==============================
@@ -205,6 +247,9 @@ function editTaxpayer(payerId) {
   const t = taxpayers.find(x => x.payerId === payerId);
 
   if (!t) return alert("Taxpayer not found.");
+
+  // Switch to register tab (with Update caption)
+  document.querySelector('.tab[data-tab="register"]').click();
 
   if (!confirm(`Edit taxpayer: ${t.firstName} ${t.lastName}?`)) return;
 
@@ -218,8 +263,9 @@ function editTaxpayer(payerId) {
   $("#occupation").value = t.occupation;
   $("#annualIncome").value = t.annualIncome;
 
-  // Switch to register tab
-  document.querySelector('.tab[data-tab="register"]').click();
+  // Change title & button to UPDATE mode
+    document.querySelector("#register h2").textContent = "Update Taxpayer";
+    document.querySelector("#registerForm button").textContent = "Update";
 
   // Store taxpayer being edited
   window.editingPayerId = payerId;
@@ -347,6 +393,7 @@ function renderTaxpayerTable(filter = "") {
         <td>€${(+t.annualIncome).toLocaleString()}</td>
 
         <td>
+          <button class="btn-delete" onclick="viewTaxpayer('${t.payerId}')">View</button>
           <button class="btn-edit" onclick= "editTaxpayer('${t.payerId}')">Edit</button>
           <button class="btn-delete" onclick="deleteTaxpayer('${t.payerId}')">Delete</button>
         </td>
