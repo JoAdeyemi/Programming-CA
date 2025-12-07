@@ -139,38 +139,37 @@ function onRegisterSubmit(e) {
   /* ==========================================================
      UPDATE MODE
   ========================================================== */
-  if (window.editingPayerId) {
-    const idx = taxpayers.findIndex(t => t.payerId === window.editingPayerId);
+  if (window.editingAssessmentId) {
+    const assessments = getAssessments();
+    const idx = assessments.findIndex(a => a.assessmentId === window.editingAssessmentId);
 
     if (idx !== -1) {
-      taxpayers[idx] = {
-        ...taxpayers[idx],   // keep payerId + createdAt unchanged
-        firstName,
-        lastName,
-        email,
-        phone,
-        address,
-        dob,
-        occupation,
-        annualIncome,
-      };
+        assessments[idx] = {
+            ...assessments[idx], // keep ID + createdAt
+            payerId,
+            year,
+            declaredIncome,
+            otherIncome,
+            pensionRelief,
+            totalIncome,
+            consolidatedRelief,
+            taxable,
+            taxDue
+        };
 
-      setTaxpayers(taxpayers);
+        setAssessments(assessments);
+        window.editingAssessmentId = null;
+
+        // Reset UI
+        document.querySelector("#assessmentTitle").textContent = "Raise Tax Assessment";
+        document.querySelector("#computeBtn").textContent = "Compute & Save Assessment";
+
+        refreshAllTables();
+        alert("Assessment updated successfully!");
+        $("#assessmentForm").reset();
+        return;
     }
-
-    // Reset the edit mode
-    window.editingPayerId = null;
-
-    // Reset button + header back to registration mode
-    document.querySelector("#register h2").textContent = "Register New Taxpayer";
-    document.querySelector("#registerForm button").textContent = "Register";
-
-    toast(msgEl, "Taxpayer updated successfully.");
-    $("#registerForm").reset();
-    refreshAllTables();
-    refreshSelects();
-    return;   // stop here
-  }
+}
 
   /* ==========================================================
      CREATE MODE (New Registration)
@@ -515,29 +514,34 @@ function editAssessment(assessmentId) {
   const list = getAssessments();
   const a = list.find(x => x.assessmentId === assessmentId);
 
-  if (!a) return alert("Assessment not found.");
+  if (!a) {
+    alert("Assessment not found.");
+    return;
+  }
 
-  // Switch to Assessment Tab
+  // Switch to Assessment tab
   document.querySelector('.tab[data-tab="assessment"]').click();
 
-  // Load form fields
+  // Update UI headings + button text
+  document.querySelector("#assessmentTitle").textContent = "Update Tax Assessment";
+  document.querySelector("#computeBtn").textContent = "Update & Save Assessment";
+
+  // Fill form values
   $("#payerSelect").value = a.payerId;
   $("#taxYear").value = a.year;
   $("#declaredIncome").value = a.declaredIncome;
   $("#otherIncome").value = a.otherIncome;
   $("#pensionRelief").value = a.pensionRelief;
 
+  // Update displayed totals
   updateIncomeCalculations();
 
-  // store reference for updating
+  // Activate edit mode
   window.editingAssessmentId = assessmentId;
 
-  // Change button to "Update Assessment"
-  document.querySelector("#assessmentTitle").textContent = "Update Tax Assessment";
-  document.getElementById("computeBtn").textContent = "Update & Save Assessment";
-
-  alert("Editing mode activated. Update form and press Save.");
+  alert("Editing mode activated. Update the form and press Save.");
 }
+
 
 
 
