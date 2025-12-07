@@ -319,9 +319,12 @@ function onAssessmentSubmit(e) {
     }
 
     window.editingAssessmentId = null;
+    document.querySelector("#assessmentTitle").textContent = "Raise Tax Assessment";
     document.getElementById("computeBtn").textContent = "Compute & Save Assessment";
     refreshAllTables();
-    return alert("Assessment updated successfully.");
+    refreshSelects();
+    toast($("#assessmentResult"), "Assessment updated successfully.");
+    return;
 }
 
 
@@ -530,7 +533,8 @@ function editAssessment(assessmentId) {
   window.editingAssessmentId = assessmentId;
 
   // Change button to "Update Assessment"
-  document.getElementById("computeBtn").textContent = "Update Assessment";
+  document.querySelector("#assessmentTitle").textContent = "Update Tax Assessment";
+  document.getElementById("computeBtn").textContent = "Update & Save Assessment";
 
   alert("Editing mode activated. Update form and press Save.");
 }
