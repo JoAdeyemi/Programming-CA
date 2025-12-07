@@ -298,6 +298,33 @@ function deleteTaxpayer(payerId) {
 function onAssessmentSubmit(e) {
   e.preventDefault();
 
+  if (window.editingAssessmentId) {
+    const list = getAssessments();
+    const idx = list.findIndex(a => a.assessmentId === window.editingAssessmentId);
+
+    if (idx !== -1) {
+      list[idx] = {
+        ...list[idx],
+        payerId,
+        year,
+        declaredIncome,
+        otherIncome,
+        pensionRelief,
+        consolidatedRelief,
+        totalIncome,
+        taxable,
+        taxDue
+      };
+      setAssessments(list);
+    }
+
+    window.editingAssessmentId = null;
+    document.getElementById("computeBtn").textContent = "Compute & Save Assessment";
+    refreshAllTables();
+    return alert("Assessment updated successfully.");
+}
+
+
   const payerId = $("#payerSelect").value;
   const year = parseInt($("#taxYear").value, 10);
 
@@ -446,6 +473,69 @@ function refreshAllTables() {
   renderTaxpayerTable($("#searchBox").value || "");
   renderAssessmentTable();
 }
+
+function viewAssessment(assessmentId) {
+  const assessments = getAssessments();
+  const a = assessments.find(x => x.assessmentId === assessmentId);
+
+  if (!a) return alert("Assessment not found.");
+
+  alert(
+    "Assessment Details\n\n" +
+    `Assessment ID: ${a.assessmentId}\n` +
+    `Payer ID: ${a.payerId}\n` +
+    `Year: ${a.year}\n` +
+    `Declared Income: ₦${a.declaredIncome.toLocaleString()}\n` +
+    `Other Income: ₦${a.otherIncome.toLocaleString()}\n` +
+    `Pension Relief: ₦${a.pensionRelief.toLocaleString()}\n` +
+    `Consolidated Relief: ₦${a.consolidatedRelief.toLocaleString()}\n` +
+    `Taxable Income: ₦${a.taxable.toLocaleString()}\n` +
+    `Tax Due: ₦${a.taxDue.toLocaleString()}\n` +
+    `Date Created: ${new Date(a.createdAt).toLocaleString()}`
+  );
+}
+
+
+function deleteAssessment(assessmentId) {
+  if (!confirm("Are you sure you want to delete this assessment?")) return;
+
+  let list = getAssessments();
+  list = list.filter(a => a.assessmentId !== assessmentId);
+  setAssessments(list);
+
+  refreshAllTables();
+  alert("Assessment deleted.");
+}
+
+
+function editAssessment(assessmentId) {
+  const list = getAssessments();
+  const a = list.find(x => x.assessmentId === assessmentId);
+
+  if (!a) return alert("Assessment not found.");
+
+  // Switch to Assessment Tab
+  document.querySelector('.tab[data-tab="assessment"]').click();
+
+  // Load form fields
+  $("#payerSelect").value = a.payerId;
+  $("#taxYear").value = a.year;
+  $("#declaredIncome").value = a.declaredIncome;
+  $("#otherIncome").value = a.otherIncome;
+  $("#pensionRelief").value = a.pensionRelief;
+
+  updateIncomeCalculations();
+
+  // store reference for updating
+  window.editingAssessmentId = assessmentId;
+
+  // Change button to "Update Assessment"
+  document.getElementById("computeBtn").textContent = "Update Assessment";
+
+  alert("Editing mode activated. Update form and press Save.");
+}
+
+
 
 /* =======================
    Import/Export

@@ -146,6 +146,24 @@ button[type="submit"] {
   color: white;
 }
 
+.action-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.action-cell button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #2b3f7a;
+  background: #0f1630;
+  color: white;
+}
+
+.btn-view { background: #3a5bdc; }
+.btn-edit { background: #2d8f56; }
+.btn-delete { background: #c0392b; }
+
 
 .msg {
   grid-column: 1 / span 2;
