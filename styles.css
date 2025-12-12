@@ -1,0 +1,173 @@
+:root {
+  --bg: #0b1020;
+  --card: #121a33;
+  --text: #e8ecff;
+  --muted: #9fb0ff;
+  --accent: #6ea8fe;
+  --danger: #ff8787;
+  --shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 800px at 10% 10%, #172040, #0b1020 60%);
+  font-family: system-ui;
+  color: var(--text);
+}
+
+header { padding: 20px; }
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.tabs button {
+  background: #0f1630;
+  border: 1px solid #2b3f7a;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #1a2752;
+  border-color: var(--accent);
+}
+
+main { padding: 20px; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+
+/* Form Layout */
+form.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  max-width: 900px;
+  background: var(--card);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+
+form.grid label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #2b3f7a;
+  background: #0f1630;
+  color: var(--text);
+}
+
+/* === TABLE ACTION BUTTONS (View / Edit / Delete) === */
+.action-buttons {
+    display: flex;
+    gap: 8px;              /* space between buttons */
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.action-buttons button {
+    flex: 1;               /* optional → make them equal width */
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;   /* prevents text wrapping */
+}
+
+
+/* Colors */
+.btn-view {
+  background: #1d3557;
+  color: white;
+}
+
+.btn-edit {
+  background: #457b9d;
+  color: white;
+}
+
+.btn-delete {
+  background: #e63946;
+  color: white;
+}
+
+
+button[type="submit"] {
+  background: linear-gradient(180deg, #335ef3, #2848c2);
+  color: white;
+  border: none;
+  cursor: pointer;
+  grid-column: 1 / span 2;
+}
+
+/* =====================
+   ACTION BUTTONS (VIEW | EDIT | DELETE)
+   ===================== */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-view,
+.btn-edit,
+.btn-delete {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-view {
+  background: #1e90ff;
+  color: white;
+}
+
+.btn-edit {
+  background: #4caf50;
+  color: white;
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+}
+
+.action-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.action-cell button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #2b3f7a;
+  background: #0f1630;
+  color: white;
+}
+
+.btn-view { background: #3a5bdc; }
+.btn-edit { background: #2d8f56; }
+.btn-delete { background: #c0392b; }
+
+
+.msg {
+  grid-column: 1 / span 2;
+  margin-top: 10px;
+}
