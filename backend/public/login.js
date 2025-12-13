@@ -1,6 +1,13 @@
+// ================================
+//  LOGIN.JS — Frontend Login Logic
+// ================================
+
 const API_URL = "http://localhost:4000/api";
 
-document.querySelector("#loginForm").addEventListener("submit", async (e) => {
+// Make sure login form exists
+const form = document.querySelector("#loginForm");
+if (form) {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = document.querySelector("#loginEmail").value.trim();
@@ -9,26 +16,34 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
 
     console.log("Submitting login:", email, password);
 
-    const res = await fetch(`${API_URL}/login`, {
+    try {
+      const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ email, password })
-    });
+      });
 
-    const data = await res.json();
-    console.log("Login response:", data);
+      const data = await res.json();
+      console.log("Login response:", data);
 
-    if (!res.ok) {
-        msgEl.textContent = data.error;
+      if (!res.ok) {
+        msgEl.textContent = data.error || "Login failed";
         msgEl.className = "msg error";
         return;
+      }
+
+      // Save login session
+      localStorage.setItem("loggedInUser", email);
+
+      console.log("Redirecting to index.html...");
+
+      // Redirect inside PUBLIC folder
+      window.location.href = "/index.html";
+
+    } catch (err) {
+      console.error("Login error:", err);
+      msgEl.textContent = "Network error — backend not running?";
+      msgEl.className = "msg error";
     }
-
-    // Save login session
-    localStorage.setItem("loggedInUser", email);
-
-    console.log("Redirecting to index.html...");
-
-    // USE ABSOLUTE PATH
-    window.location.href = "/index.html";
-});
+  });
+}
