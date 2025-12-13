@@ -25,4 +25,7 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     localStorage.setItem("loggedInUser", email);
 
     window.location.href = "/index.html";
+
+    console.log("Login response:", data, res.status);
+
 });
