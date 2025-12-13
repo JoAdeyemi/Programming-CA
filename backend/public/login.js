@@ -7,6 +7,8 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     const password = document.querySelector("#loginPassword").value.trim();
     const msgEl = document.querySelector("#loginMsg");
 
+    console.log("Submitting login:", email, password);
+
     const res = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -14,6 +16,7 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     });
 
     const data = await res.json();
+    console.log("Login response:", data);
 
     if (!res.ok) {
         msgEl.textContent = data.error;
@@ -24,8 +27,8 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     // Save login session
     localStorage.setItem("loggedInUser", email);
 
-    window.location.href = "/index.html";
+    console.log("Redirecting to index.html...");
 
-    console.log("Login response:", data, res.status);
-
+    // USE ABSOLUTE PATH
+    window.location.href = "./index.html";
 });

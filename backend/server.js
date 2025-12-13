@@ -14,7 +14,6 @@ const PORT = 4000;
 // -------------------- MIDDLEWARE --------------------
 app.use(cors());           // allow frontend (browser) to call API
 app.use(express.json());   // parse JSON bodies
-
 app.use(express.static(path.join(__dirname, "public")));  //serve frontend files
 
 // -------------------- DATABASE SETUP --------------------
