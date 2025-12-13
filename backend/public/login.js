@@ -24,5 +24,5 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     // Save login session
     localStorage.setItem("loggedInUser", email);
 
-    window.location.href = "index.html";
+    window.location.href = "/index.html";
 });
