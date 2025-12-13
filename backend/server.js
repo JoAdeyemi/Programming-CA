@@ -318,21 +318,15 @@ app.delete("/api/assessments/:assessmentId", (req, res) => {
 
 //--------------------ADD LOGIN ROUTE------------------
 
-// =========================
-// SIMPLE LOGIN (Demo Only)
-// =========================
-
+// =====================================
+// LOGIN ENDPOINT
+// =====================================
 app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
 
-  // Temporary hard-coded login for demo
-  if (email === "20072545@dbs.ie" && password === "admin") {
-    return res.json({ message: "Login successful" });
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password required" });
   }
-
-  return res.status(401).json({ error: "Invalid email or password" });
-});
-
 
   db.get(
     "SELECT * FROM users WHERE email = ? AND password = ?",
@@ -343,11 +337,12 @@ app.post("/api/login", (req, res) => {
 
       return res.json({
         message: "Login successful",
-        token: "SIMPLE_TOKEN_123",  // CA-friendly simplified auth
+        token: "SIMPLE_TOKEN_123" // simplified token for CA
       });
     }
   );
 });
+
 
 
 // -------------------- ROOT TEST --------------------
