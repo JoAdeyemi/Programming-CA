@@ -30,5 +30,6 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     console.log("Redirecting to index.html...");
 
     // USE ABSOLUTE PATH
-    window.location.href = "./index.html";
+    window.location.href = "http://localhost:4000/index.html";
+
 });
