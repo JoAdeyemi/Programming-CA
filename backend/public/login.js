@@ -22,7 +22,7 @@ document.querySelector("#loginForm").addEventListener("submit", async (e) => {
     }
 
     // Save login session
-    localStorage.setItem("loggedInUser", email);
+    localStorage.setItem("loggedInUser", data.token);
 
     window.location.href = "index.html";
 });
