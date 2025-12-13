@@ -25,18 +25,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 // Create required tables
 db.serialize(() => {
-  db.run(`
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL
-  )
-`);
-  db.run(
-  `INSERT OR IGNORE INTO users (email, password) VALUES (?, ?)`,
-  ["20072545@dbs.ie", "admin"]
-);
-
+  
   db.run(`
     CREATE TABLE IF NOT EXISTS taxpayers (
       payerId TEXT PRIMARY KEY,
@@ -316,34 +305,6 @@ app.delete("/api/assessments/:assessmentId", (req, res) => {
     }
   );
 });
-
-//--------------------ADD LOGIN ROUTE------------------
-
-// =====================================
-// LOGIN ENDPOINT
-// =====================================
-app.post("/api/login", (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email and password required" });
-  }
-
-  db.get(
-    "SELECT * FROM users WHERE email = ? AND password = ?",
-    [email, password],
-    (err, row) => {
-      if (err) return res.status(500).json({ error: "Database error" });
-      if (!row) return res.status(401).json({ error: "Invalid credentials" });
-
-      return res.json({
-        message: "Login successful",
-        token: "SIMPLE_TOKEN_123" // simplified token for CA
-      });
-    }
-  );
-});
-
 
 
 // -------------------- ROOT TEST --------------------
