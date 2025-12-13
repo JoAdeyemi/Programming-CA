@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Taxpayer Registration and Assessment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+
+  <h1>Taxpayer Registry and Assessments</h1>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="register">Register Taxpayer</button>
+    <button class="tab" data-tab="assessment">Raise Assessment</button>
+    <button class="tab" data-tab="records">Records</button>
+  </nav>
+
+  <main>
+
+    <!-- ================= REGISTER TAB ================= -->
+    <section id="register" class="tab-content active">
+
+      <h2>Register New Taxpayer</h2>
+
+      <form id="registerForm" class="grid">
+        <label>First name</label>
+        <input id="firstName">
+
+        <label>Last Name</label>
+        <input id="lastName">
+
+        <label>Email</label>
+        <input id="email">
+
+        <label>Phone Number</label>
+        <input id="phone" placeholder="+353...">
+
+        <label>Address</label>
+        <input id="address">
+
+        <label>Date of Birth</label>
+        <input id="dob" type="date">
+
+        <label>Occupation</label>
+        <input id="occupation">
+
+        <label>Annual Income (₦)</label>
+        <input id="annualIncome" type="number">
+
+        <button type="submit">Register</button>
+      </form>
+
+      <div id="registerMsg" class="msg"></div>
+    </section>
+
+
+
+    <!-- ================= ASSESSMENT TAB ================= -->
+    <section id="assessment" class="tab-content">
+
+      <h2 id="assessmentTitle">Raise Tax Assessment</h2>
+
+      <form id="assessmentForm" class="grid">
+        <label>Select Taxpayer</label>
+        <select id="payerSelect"></select>
+
+        <label>Tax Year</label>
+        <input type="number" id="taxYear" value="2025">
+
+        <label>Declared Income (₦)</label>
+        <input id="declaredIncome" type="number">
+
+        <label>Other Income (₦)</label>
+        <input id="otherIncome" type="number" value="0">
+
+        <label>Pension Relief Contribution (₦)</label>
+        <input id="pensionRelief" type="number" value="0">
+
+        <button type="submit">Compute & Save Assessment</button>
+      </form>
+
+      <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
+      <p><strong>Consolidated Relief (20%):</strong> <span id="consolDisplay">₦0</span></p>
+
+      <button id="computeBtn"
+          onclick="document.getElementById('assessmentForm').requestSubmit()">
+        Compute & Save Assessment
+      </button>
+
+      <div id="assessmentResult" class="msg"></div>
+
+    </section>
+
+
+
+    <!-- ================= RECORDS TAB ================= -->
+    <section id="records" class="tab-content">
+
+      <h2>Records</h2>
+
+      <input id="searchBox" placeholder="Search taxpayers by name">
+      <button id="exportBtn">Export JSON</button>
+      <button id="importBtn">Import JSON</button>
+      <input id="importFile" type="file" style="display:none">
+
+      <h3>Registered Taxpayers</h3>
+      <table id="taxpayerTable">
+        <thead>
+          <tr>
+            <th>Payer ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Annual Income (₦)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Tax Assessments</h3>
+      <table id="assessmentTable">
+        <thead>
+          <tr>
+            <th>Assessment ID</th>
+            <th>Payer ID</th>
+            <th>Year</th>
+            <th>Declared Income (₦)</th>
+            <th>Other Income (₦)</th>
+            <th>Taxable Income (₦)</th>
+            <th>Tax Due (₦)</th>
+            <th>Date Created</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <small>MVP • Stored in localStorage • Built with vanilla JS</small>
+  </footer>
+
+  <script src="./app.js"></script>
+
+</body>
+
+</html>
