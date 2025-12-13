@@ -1,24 +1,28 @@
 const API_URL = "http://localhost:4000/api";
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.querySelector("#loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const email = loginEmail.value;
-  const password = loginPassword.value;
+    const email = document.querySelector("#loginEmail").value.trim();
+    const password = document.querySelector("#loginPassword").value.trim();
+    const msgEl = document.querySelector("#loginMsg");
 
-  const res = await fetch(`${API_URL}/login`, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ email, password })
-  });
+    const res = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ email, password })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (res.ok) {
-    localStorage.setItem("authToken", data.token);
-    location.href = "index.html";
-  } else {
-    loginMsg.textContent = data.error;
-    loginMsg.classList.add("error");
-  }
+    if (!res.ok) {
+        msgEl.textContent = data.error;
+        msgEl.className = "msg error";
+        return;
+    }
+
+    // Save login session
+    localStorage.setItem("loggedInUser", email);
+
+    window.location.href = "index.html";
 });
