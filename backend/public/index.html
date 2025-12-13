@@ -8,6 +8,12 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
+<script>
+  if (!localStorage.getItem("authTOken")) {
+    location.href = "login.html";
+  }
+</script>
+
 <body>
 
   <h1>Taxpayer Registry and Assessments</h1>
