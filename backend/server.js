@@ -15,6 +15,8 @@ const PORT = 4000;
 app.use(cors());           // allow frontend (browser) to call API
 app.use(express.json());   // parse JSON bodies
 
+app.use(express.static(path.join(__dirname, "public")));  //serve frontend files
+
 // -------------------- DATABASE SETUP --------------------
 const dbPath = path.join(__dirname, "tax_app.db");
 const db = new sqlite3.Database(dbPath, (err) => {
