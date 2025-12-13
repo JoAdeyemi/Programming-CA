@@ -1,164 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
-  <title>Taxpayer Registration and Assessment</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="./styles.css" />
+  <meta charset="UTF-8" />
+  <title>Taxpayer Registry & Assessment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
-<script>
-  if (!localStorage.getItem("authTOken")) {
-    location.href = "login.html";
-  }
-</script>
-
 <body>
 
-  <h1>Taxpayer Registry and Assessments</h1>
+<header>
+  <h1>Taxpayer Registry & Assessment System</h1>
+</header>
 
-  <!-- TABS -->
-  <nav class="tabs">
-    <button class="tab active" data-tab="register">Register Taxpayer</button>
-    <button class="tab" data-tab="assessment">Raise Assessment</button>
-    <button class="tab" data-tab="records">Records</button>
-  </nav>
+<!-- Tabs -->
+<nav class="tabs">
+  <button class="tab active" data-tab="register">Register Taxpayer</button>
+  <button class="tab" data-tab="assessment">Raise Assessment</button>
+  <button class="tab" data-tab="records">Records</button>
+</nav>
 
-  <main>
+<main>
 
-    <!-- ================= REGISTER TAB ================= -->
-    <section id="register" class="tab-content active">
+<!-- ================= REGISTER ================= -->
+<section id="register" class="tab-content active">
+  <h2 id="registerTitle">Register New Taxpayer</h2>
 
-      <h2>Register New Taxpayer</h2>
+  <form id="registerForm" class="card">
+    <input id="firstName" placeholder="First Name" required />
+    <input id="lastName" placeholder="Last Name" required />
+    <input id="email" placeholder="Email" type="email" required />
+    <input id="phone" placeholder="Phone" />
+    <input id="address" placeholder="Address" />
+    <input id="dob" type="date" />
+    <input id="occupation" placeholder="Occupation" />
+    <input id="annualIncome" type="number" placeholder="Annual Income (₦)" required />
 
-      <form id="registerForm" class="grid">
-        <label>First name</label>
-        <input id="firstName">
+    <button type="submit">Register</button>
+  </form>
 
-        <label>Last Name</label>
-        <input id="lastName">
+  <div id="registerMsg" class="msg"></div>
+</section>
 
-        <label>Email</label>
-        <input id="email">
+<!-- ================= ASSESSMENT ================= -->
+<section id="assessment" class="tab-content">
+  <h2 id="assessmentTitle">Raise Tax Assessment</h2>
 
-        <label>Phone Number</label>
-        <input id="phone" placeholder="+353...">
+  <form id="assessmentForm" class="card">
+    <select id="payerSelect"></select>
+    <input id="taxYear" type="number" value="2025" />
+    <input id="declaredIncome" type="number" placeholder="Declared Income" />
+    <input id="otherIncome" type="number" placeholder="Other Income" />
+    <input id="pensionRelief" type="number" placeholder="Pension Relief" />
 
-        <label>Address</label>
-        <input id="address">
+    <button id="computeBtn" type="submit">Compute & Save Assessment</button>
+  </form>
 
-        <label>Date of Birth</label>
-        <input id="dob" type="date">
+  <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
+  <p><strong>Consolidated Relief (20%):</strong> <span id="consolDisplay">₦0</span></p>
 
-        <label>Occupation</label>
-        <input id="occupation">
+  <div id="assessmentResult" class="msg"></div>
+</section>
 
-        <label>Annual Income (₦)</label>
-        <input id="annualIncome" type="number">
+<!-- ================= RECORDS ================= -->
+<section id="records" class="tab-content">
+  <h2>Records</h2>
 
-        <button type="submit">Register</button>
-      </form>
+  <h3>Taxpayers</h3>
+  <table id="taxpayerTable">
+    <thead>
+      <tr>
+        <th>Payer ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Income</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-      <div id="registerMsg" class="msg"></div>
-    </section>
+  <h3>Assessments</h3>
+  <table id="assessmentTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Payer</th>
+        <th>Year</th>
+        <th>Taxable</th>
+        <th>Tax Due</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</section>
 
+</main>
 
+<footer>
+  <small>
+    MSc Information Systems • Programming CA • 
+    <a href="https://github.com/JoAdeyemi/Programming-CA" target="_blank">
+      GitHub Repository
+    </a>
+  </small>
+</footer>
 
-    <!-- ================= ASSESSMENT TAB ================= -->
-    <section id="assessment" class="tab-content">
-
-      <h2 id="assessmentTitle">Raise Tax Assessment</h2>
-
-      <form id="assessmentForm" class="grid">
-        <label>Select Taxpayer</label>
-        <select id="payerSelect"></select>
-
-        <label>Tax Year</label>
-        <input type="number" id="taxYear" value="2025">
-
-        <label>Declared Income (₦)</label>
-        <input id="declaredIncome" type="number">
-
-        <label>Other Income (₦)</label>
-        <input id="otherIncome" type="number" value="0">
-
-        <label>Pension Relief Contribution (₦)</label>
-        <input id="pensionRelief" type="number" value="0">
-
-        <button type="submit">Compute & Save Assessment</button>
-      </form>
-
-      <p><strong>Total Income:</strong> <span id="totalIncomeDisplay">₦0</span></p>
-      <p><strong>Consolidated Relief (20%):</strong> <span id="consolDisplay">₦0</span></p>
-
-      <button id="computeBtn"
-          onclick="document.getElementById('assessmentForm').requestSubmit()">
-        Compute & Save Assessment
-      </button>
-
-      <div id="assessmentResult" class="msg"></div>
-
-    </section>
-
-
-
-    <!-- ================= RECORDS TAB ================= -->
-    <section id="records" class="tab-content">
-
-      <h2>Records</h2>
-
-      <input id="searchBox" placeholder="Search taxpayers by name">
-      <button id="exportBtn">Export JSON</button>
-      <button id="importBtn">Import JSON</button>
-      <input id="importFile" type="file" style="display:none">
-
-      <h3>Registered Taxpayers</h3>
-      <table id="taxpayerTable">
-        <thead>
-          <tr>
-            <th>Payer ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Annual Income (₦)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <h3>Tax Assessments</h3>
-      <table id="assessmentTable">
-        <thead>
-          <tr>
-            <th>Assessment ID</th>
-            <th>Payer ID</th>
-            <th>Year</th>
-            <th>Declared Income (₦)</th>
-            <th>Other Income (₦)</th>
-            <th>Taxable Income (₦)</th>
-            <th>Tax Due (₦)</th>
-            <th>Date Created</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-    </section>
-
-  </main>
-
-  <footer>
-    <small>Taxpayer Registry & Assessment Systems • Powered by SQLite + Node.js + Express • 
-      <a href="https://github.com/JoAdeyemi/Programming-CA.git" target="_blank">Source on github
-      </a>
-      • © 2025
-    </small>
-  </footer>
-
-  <script src="./app.js"></script>
-
+<script src="app.js"></script>
 </body>
-
 </html>
