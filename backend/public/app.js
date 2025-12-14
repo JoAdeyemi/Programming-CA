@@ -3,7 +3,7 @@
    Backend: Node.js + Express + SQLite
    ====================================================== */
 
-const API_BASE = "http://localhost:4000/api";
+const API_BASE = "https://your-backend-name.onrender.com/api";
 
 /* =======================
    SEQUENCES (local only)
