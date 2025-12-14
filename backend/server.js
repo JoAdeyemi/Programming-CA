@@ -14,9 +14,20 @@ const PORT = process.env.PORT || 4000;
 // ------------------------------------------------------
 // MIDDLEWARE
 // ------------------------------------------------------
-app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public"))); // Serve frontend files
+
+app.use(cors({
+  origin: [
+    "https://taxpayer-registry-api.onrender.com",
+    "http://localhost:3000",
+    "http://localhost:4000"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type"]
+}));
+
+app.options("*", cors());
+
 
 // ------------------------------------------------------
 // DATABASE SETUP
