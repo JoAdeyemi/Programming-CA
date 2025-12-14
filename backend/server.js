@@ -1,32 +1,18 @@
-// ======================================================
-//  Taxpayer Registry & Assessment Backend API
-//  Tools: Node.js + Express + SQLite3 + CORS
-// ======================================================
-
-const express = require("express");
 const cors = require("cors");
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
-
-const app = express();
-const PORT = process.env.PORT || 4000;
-
-// ------------------------------------------------------
-// MIDDLEWARE
-// ------------------------------------------------------
-app.use(express.json());
 
 app.use(cors({
-  origin: [
-    "https://taxpayer-registry-api.onrender.com",
-    "http://localhost:3000",
-    "http://localhost:4000"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: "*",   // ✅ allow any frontend (safe for CA/demo)
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
 
-app.options("*", cors());
+app.use(express.json());
+
+
+/* =========================
+   MIDDLEWARE
+   ========================= */
+app.use(express.json());
 
 
 // ------------------------------------------------------
