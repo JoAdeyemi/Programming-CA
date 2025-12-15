@@ -2,6 +2,7 @@
 // Taxpayer Registry & Assessment Backend API
 // Node.js + Express + SQLite3
 // ======================================================
+const { calculateTax } = require("./utils/tax");
 
 const express = require("express");
 const cors = require("cors");
@@ -256,12 +257,17 @@ app.post("/api/assessments", (req, res) => {
     year,
     declaredIncome,
     otherIncome,
-    totalIncome,
     pensionRelief,
-    consolidatedRelief,
-    taxable,
-    taxDue,
+    consolidatedRelief
   } = req.body;
+
+  const totalIncome = declaredIncome + otherIncome;
+  const taxable = Math.max(
+    0,
+    totalIncome - pensionRelief - consolidatedRelief
+  );
+
+  const taxDue = calculateTax(taxable); // ✅ HERE
 
   const createdAt = new Date().toISOString();
 
@@ -272,7 +278,7 @@ app.post("/api/assessments", (req, res) => {
       totalIncome, pensionRelief, consolidatedRelief,
       taxable, taxDue, createdAt
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `,
+    `,
     [
       assessmentId,
       payerId,
@@ -284,18 +290,20 @@ app.post("/api/assessments", (req, res) => {
       consolidatedRelief,
       taxable,
       taxDue,
-      createdAt,
+      createdAt
     ],
     function (err) {
-      if (err) return dbError(res, err, "Could not create assessment");
+      if (err) return res.status(500).json({ error: "Could not create assessment" });
 
       res.status(201).json({
         message: "Assessment created",
         assessmentId,
+        taxDue
       });
     }
   );
 });
+
 
 // Delete assessment
 app.delete("/api/assessments/:assessmentId", (req, res) => {
