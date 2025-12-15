@@ -39,13 +39,13 @@ The following documentation was referenced:
 - YouTube references for understanding REST APIs & CRUD operations  
 - VS Code documentation for environment setup  
 
-### Academic Integrity Note
+
 While ChatGPT provided explanations, templates, and debugging assistance, **all final logic, implementation decisions, and structural choices were written, tested, and validated by myself**, in line with the module’s requirements.
 
 
 **************************************************
 
-# Taxpayer Registry & Assessment System (MVP)
+# Taxpayer Registry & Assessment System
 A full–stack mini-application designed for my MSc **Continuous Assessment (CA)** requirement.  
 The system allows the creation, updating, deletion, and assessment of taxpayers using a modern frontend and a backend powered by **Node.js + Express + SQLite3**.
 
