@@ -332,6 +332,11 @@ app.get("/", (req, res) => {
    START SERVER
    ====================================================== */
 
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () =>
+    console.log(`Backend running at http://localhost:${PORT}`)
+  );
+}
+
+module.exports = app;
+
