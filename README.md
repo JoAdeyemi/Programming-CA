@@ -112,5 +112,27 @@ The UI is built to be clean, modern, and responsive.
 
 ---
 
-## 
+## Testing and Validation
 
+This project includes backend unit tests to validate core business logic independently of the user interface.
+
+### Tools Used
+- Jest – JavaScript testing framework
+- Node.js (CommonJS modules)
+
+### Implemented Tests
+
+### Tax Calculation Test
+
+- Verifies that tax is calculated at a flat rate  of 23%
+- Ensures zero or negative income returns zero tax
+
+### Assessment Taxable Income Test
+
+# Confirms correct calculation of taxable income using:
+
+- Declared income
+- Other income
+- Pension relief
+- Consolidated relief
+- Ensures taxable income never becomes negative
